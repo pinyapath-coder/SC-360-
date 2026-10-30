@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RIS 360 องศา</title>
+<meta name="theme-color" content="#173f68">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RIS 360">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1b2430; --muted:#5d6b7a; --line:#e3e8ee; --bg:#f4f6f9; --card:#fff;
+  --navy:#173f68; --navy2:#225a92; --accent:#c8102e;
+  --good:#1f8a4c; --goodbg:#e5f4ea; --mid:#b26b00; --midbg:#fdf1dc; --bad:#c0392b; --badbg:#fbe6e3;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Sarabun',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;font-size:16px;line-height:1.55}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+input,textarea{font-family:inherit;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.wide{max-width:1180px}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:calc(28px + env(safe-area-inset-top)) 20px 56px}
+body{padding-bottom:env(safe-area-inset-bottom)}
+.install{display:flex;gap:12px;align-items:center}
+.install img{width:44px;height:44px;border-radius:10px}
+.hero .brand{font-size:13px;letter-spacing:.08em;opacity:.8;text-transform:uppercase}
+.hero h1{margin:6px 0 4px;font-size:24px;line-height:1.3}
+.hero .sub{opacity:.9;font-size:15px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:0 1px 3px rgba(20,40,70,.08),0 6px 20px rgba(20,40,70,.05);padding:20px;margin-bottom:14px}
+.lift{margin-top:-40px}
+label.f{display:block;font-weight:600;margin:12px 0 6px}
+.inp{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;outline:none}
+.inp:focus{border-color:var(--navy2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;font-weight:600;background:var(--navy);color:#fff}
+.btn:hover{background:var(--navy2)}
+.btn.block{width:100%;padding:14px}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--navy2)}
+.btn.sm{padding:7px 12px;font-size:14px}
+.btn:disabled{opacity:.55;cursor:default}
+.link{background:none;border:0;color:var(--navy2);text-decoration:underline;padding:0}
+.muted{color:var(--muted)} .small{font-size:14px} .tiny{font-size:12.5px}
+.err{background:var(--badbg);color:var(--bad);padding:10px 12px;border-radius:10px;margin-top:12px;font-size:15px}
+.note{background:#eef4fb;border-radius:10px;padding:12px 14px;font-size:14.5px;color:#2b4767}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.p-ok{background:var(--goodbg);color:var(--good)} .p-wait{background:#eef1f5;color:var(--muted)}
+.p-mid{background:var(--midbg);color:var(--mid)} .p-bad{background:var(--badbg);color:var(--bad)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.progress{height:10px;background:#e6ebf1;border-radius:99px;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--good),#36b36b);border-radius:99px;transition:width .4s}
+.sec-h{font-size:15px;font-weight:700;color:var(--navy);margin:22px 4px 8px;display:flex;justify-content:space-between}
+.task{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.task:hover{border-color:var(--navy2)}
+.avatar{flex:0 0 42px;height:42px;border-radius:50%;background:#e8eef6;color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700}
+.task .t{flex:1;min-width:0}
+.task .n{font-weight:600}
+.sticky{position:sticky;top:0;z-index:5;background:rgba(244,246,249,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.sticky .wrap{padding-top:10px;padding-bottom:10px}
+.who{font-weight:700;font-size:17px;line-height:1.3}
+.legend{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;margin-top:8px}
+.legend b{color:var(--navy)}
+.cat h3{margin:0 0 4px;font-size:17px;color:var(--navy)}
+.q{padding:14px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0}
+.q .txt{margin-bottom:10px}
+.q .code{display:inline-block;min-width:30px;font-weight:700;color:var(--navy2)}
+.q.miss{background:#fff6f5;margin:0 -20px;padding:14px 20px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr) 1.15fr;gap:6px}
+.scale button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 0;font-weight:700;font-size:17px;color:var(--ink)}
+.scale button.na{font-size:14px;color:var(--muted)}
+.scale button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.scale button.na.on{background:#6b7785;border-color:#6b7785}
+.lvl{font-size:13.5px;color:var(--muted);margin-top:6px;min-height:20px}
+textarea.inp{min-height:84px;resize:vertical}
+.foot{position:sticky;bottom:0;background:rgba(244,246,249,.96);border-top:1px solid var(--line);padding:12px 16px}
+.done-ico{width:72px;height:72px;border-radius:50%;background:var(--goodbg);color:var(--good);display:flex;align-items:center;justify-content:center;margin:8px auto 14px;font-size:38px}
+.center{text-align:center}
+.spinner{position:fixed;inset:0;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;z-index:50}
+.spinner i{width:38px;height:38px;border:4px solid #cfd9e4;border-top-color:var(--navy);border-radius:50%;animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* admin */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(20,40,70,.08)}
+.kpi .v{font-size:28px;font-weight:700;color:var(--navy);line-height:1.2}
+.kpi .l{font-size:13.5px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{border:0;background:#e6ebf1;color:var(--ink);padding:8px 14px;border-radius:999px;font-weight:600;font-size:14.5px}
+.tabs button.on{background:var(--navy);color:#fff}
+table.t{width:100%;border-collapse:collapse;font-size:14.5px}
+table.t th{text-align:left;font-weight:600;color:var(--muted);font-size:13px;border-bottom:1.5px solid var(--line);padding:8px 8px}
+table.t td{border-bottom:1px solid var(--line);padding:9px 8px;vertical-align:top}
+table.t td.num,table.t th.num{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.relmini{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.relmini b{color:var(--ink);font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(15,25,40,.45);display:flex;align-items:center;justify-content:center;z-index:40;padding:16px}
+.modal .card{max-width:640px;width:100%;margin:0}
+/* report */
+.rp h2{font-size:16px;color:var(--navy);margin:0 0 10px}
+.rp-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.big{font-size:44px;font-weight:700;line-height:1;color:var(--navy)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.cell{display:inline-block;min-width:44px;text-align:center;border-radius:6px;padding:2px 6px;font-weight:600;font-variant-numeric:tabular-nums}
+.c-good{background:var(--goodbg);color:var(--good)} .c-mid{background:var(--midbg);color:var(--mid)} .c-bad{background:var(--badbg);color:var(--bad)} .c-na{color:#9aa5b1}
+.flag{font-size:12px;font-weight:600;padding:1px 7px;border-radius:6px;margin-left:4px;white-space:nowrap}
+.f-s{background:var(--goodbg);color:var(--good)} .f-d{background:var(--badbg);color:var(--bad)} .f-b{background:#f3e8fb;color:#7b3fa6} .f-h{background:#e6f0fb;color:#225a92}
+.cm{border-left:3px solid var(--line);padding:4px 0 4px 12px;margin:8px 0}
+.cm .g{font-size:12.5px;font-weight:600;color:var(--muted)}
+.cm-sec h3{font-size:15px;margin:16px 0 4px}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff;font-size:12.5px}
+  .noprint{display:none!important}
+  .card{box-shadow:none;border:1px solid #dde3ea;break-inside:avoid;padding:14px}
+  .wrap{max-width:none;padding:0}
+  .grid2{grid-template-columns:1fr;gap:0}
+  .cm-sec,.brk{break-inside:auto}
+  .rp svg{max-width:340px!important}
+  table.t td,table.t th{padding:5px 6px}
+  tr{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="spin" class="spinner" style="display:none"><i></i></div>
+
+<script>
+/* ======================= state & utils ======================= */
+var S = { info:null, id:store('ris360_id'), pin:'', me:null, tasks:[], cur:null, ans:{}, txt:{}, pw:'', admin:null, tab:'ratee', onlyPending:true, filter:'' };
+var app = document.getElementById('app');
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function spin(on){ document.getElementById('spin').style.display = on?'flex':'none'; }
+var ACTION = { apiInfo:['info'], apiLogin:['login','id','pin'], apiMyAnswer:['myAnswer','id','pin','rateeId'],
+  apiSubmit:['submit','id','pin','data'], apiAdmin:['admin','pw'], apiReport:['report','pw','rateeId'] };
+function call(fn){
+  var args = Array.prototype.slice.call(arguments,1), map = ACTION[fn], body = { action: map[0] };
+  map.slice(1).forEach(function(k,i){ body[k] = args[i]; });
+  spin(true);
+  return fetch(window.RIS360_CONFIG.API_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body) })
+    .then(function(r){ if(!r.ok) throw new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ ('+r.status+')'); return r.json(); })
+    .then(function(j){ spin(false); if(!j.ok) throw new Error(j.error); return j.data; })
+    .catch(function(e){ spin(false); if(e instanceof TypeError) e = new Error('ไม่มีสัญญาณอินเทอร์เน็ต หรือเชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณาลองใหม่'); throw e; });
+}
+function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k)||''; localStorage.setItem(k,v); }catch(e){ return ''; } }
+function errMsg(e){ return (e && e.message ? e.message : String(e)).replace(/^Error:\s*/,''); }
+var TH_M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+function thDate(s){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||''); if(!m) return s||'-'; return (+m[3])+' '+TH_M[+m[2]-1]+' '+(+m[1]+543); }
+function f2(x){ return x==null||isNaN(x) ? '–' : Number(x).toFixed(2); }
+function cls(x){ return x==null ? 'c-na' : x>=4 ? 'c-good' : x>=3.5 ? 'c-mid' : 'c-bad'; }
+function cell(x){ return '<span class="cell '+cls(x)+'">'+f2(x)+'</span>'; }
+function vPill(v){ var c={'พร้อมเติบโต':'p-ok','พัฒนาต่อ':'p-mid','ยังไม่พร้อม':'p-bad'}[v]||'p-wait'; return '<span class="pill '+c+'">'+esc(v)+'</span>'; }
+function initial(n){ return esc((n||'?').trim().charAt(0)); }
+function fullName(p){ return esc(p.name)+(p.nick?' <span class="muted">('+esc(p.nick)+')</span>':''); }
+function toTop(){ window.scrollTo(0,0); }
+
+/* rater-perspective section titles: rel = ผู้ประเมินเป็นอะไรของผู้ถูกประเมิน */
+var SEC = [
+  {rel:'ตนเอง',   title:'ประเมินตนเอง',        tag:'ตนเอง'},
+  {rel:'ลูกน้อง', title:'ประเมินหัวหน้าของคุณ',  tag:'หัวหน้าของคุณ'},
+  {rel:'เพื่อน',  title:'ประเมินเพื่อนร่วมงาน',  tag:'เพื่อนร่วมงาน'},
+  {rel:'หัวหน้า', title:'ประเมินลูกทีมของคุณ',  tag:'ลูกทีมของคุณ'}
+];
+function secOf(rel){ return SEC.filter(function(s){return s.rel===rel;})[0]; }
+
+/* ======================= views: rater ======================= */
+function viewLogin(error){
+  var i = S.info;
+  var status = i.testMode ? '<span class="pill p-mid">โหมดทดสอบ</span>'
+             : i.isOpen ? '<span class="pill p-ok">เปิดให้ประเมิน</span>' : '<span class="pill p-bad">ปิดการประเมิน</span>';
+  app.innerHTML =
+   '<div class="hero"><div class="wrap" style="padding:0 16px">'+
+     '<div class="brand">RIS · HR & OD</div>'+
+     '<h1>'+esc(i.title)+'</h1>'+
+     '<div class="sub">ระยะเวลา '+thDate(i.openDate)+' – '+thDate(i.closeDate)+' &nbsp;'+status+'</div>'+
+   '</div></div>'+
+   '<div class="wrap"><div class="card lift">'+
+     '<form id="lf">'+
+     '<label class="f" for="uid">รหัสพนักงาน</label>'+
+     '<input class="inp" id="uid" inputmode="numeric" autocomplete="off" placeholder="เช่น 400415049" value="'+esc(S.id)+'">'+
+     (i.usePin ? '<label class="f" for="upin">PIN 4 หลัก</label><input class="inp" id="upin" inputmode="numeric" maxlength="4" type="password" autocomplete="off">' : '')+
+     (error ? '<div class="err">'+esc(error)+'</div>' : '')+
+     '<div style="height:16px"></div><button class="btn block" type="submit">เข้าสู่แบบประเมิน</button>'+
+     '</form></div>'+
+     '<div class="card note">'+
+       '<b>ผลประเมินเป็นความลับ</b> – รายงานจะแสดงเป็นค่าเฉลี่ยรายกลุ่ม (หัวหน้า / เพื่อนร่วมงาน / ลูกน้อง) ผู้ถูกประเมินจะไม่เห็นว่าใครให้คะแนนเท่าไร '+
+       'ถ้าลูกน้องตอบน้อยกว่า 3 คน ระบบจะรวมเข้ากับกลุ่มเพื่อนร่วมงานเพื่อไม่ให้ระบุตัวได้'+
+       '<div style="margin-top:8px">แต่ละคนใช้เวลาประมาณ 3–5 นาที · ส่งแล้วกลับมาแก้ไขได้จนถึงวันปิดประเมิน</div>'+
+     '</div>'+
+     installCard()+
+     '<div class="center small" style="margin-top:20px"><button class="link" id="hr">สำหรับ HR</button></div>'+
+   '</div>';
+  document.getElementById('lf').onsubmit = function(ev){ ev.preventDefault();
+    S.id = document.getElementById('uid').value.trim();
+    S.pin = i.usePin ? document.getElementById('upin').value.trim() : '';
+    if(!S.id){ viewLogin('กรุณากรอกรหัสพนักงาน'); return; }
+    call('apiLogin', S.id, S.pin).then(function(r){ store('ris360_id', S.id); S.me=r.me; S.tasks=r.tasks; S.info.isOpen=r.isOpen; viewList(); })
+      .catch(function(e){ viewLogin(errMsg(e)); });
+  };
+  document.getElementById('hr').onclick = function(){ viewHrLogin(); };
+  var ib = document.getElementById('inst'); if(ib) ib.onclick = function(){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(function(){ deferredPrompt=null; viewLogin(); }); };
+}
+
+/* ======================= install (PWA) ======================= */
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferredPrompt = e; if(S.info && !S.me && !S.admin) viewLogin(); });
+function isStandalone(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+function installCard(){
+  if(isStandalone()) return '';
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var body = deferredPrompt ? '<button class="btn sm" id="inst">ติดตั้งแอป</button>'
+    : ios ? '<div class="small muted">ใน Safari กดปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรขึ้น) แล้วเลือก <b>เพิ่มไปยังหน้าจอโฮม</b></div>'
+    : '<div class="small muted">เปิดเมนู ⋮ ของ Chrome แล้วเลือก <b>ติดตั้งแอป</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b></div>';
+  return '<div class="card install"><img src="icons/icon-192.png" alt=""><div style="flex:1"><b>ติดตั้งเป็นแอปบนมือถือ</b>'+(deferredPrompt?'<div class="small muted">เปิดครั้งต่อไปได้จากไอคอนบนหน้าจอ</div>':'')+(deferredPrompt?'':body)+'</div>'+(deferredPrompt?body:'')+'</div>';
+}
+
+function viewList(){
+  var t = S.tasks, done = t.filter(function(x){return x.done;}).length, pct = t.length? Math.round(done*100/t.length):0;
+  var html = '<div class="wrap">'+
+    '<div class="topbar"><div><div class="muted small">สวัสดี</div><div class="who">'+fullName(S.me)+'</div>'+
+      '<div class="muted small">'+esc(S.me.position)+' · '+esc(S.me.branchName)+(S.me.team?' '+esc(S.me.team):'')+'</div></div>'+
+      '<button class="btn ghost sm" id="out">ออกจากระบบ</button></div>'+
+    '<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>ความคืบหน้าของคุณ</b><span>'+done+' / '+t.length+' ฉบับ</span></div>'+
+      '<div class="progress"><i style="width:'+pct+'%"></i></div>'+
+      (done===t.length && t.length ? '<div class="small" style="margin-top:10px;color:var(--good);font-weight:600">ครบทุกฉบับแล้ว ขอบคุณค่ะ 🙏</div>' : '')+
+      (!S.info.isOpen ? '<div class="err">ขณะนี้ไม่อยู่ในช่วงเวลาการประเมิน (ดูได้แต่ส่งไม่ได้)</div>' : '')+
+    '</div>';
+  if(!t.length) html += '<div class="card muted">ไม่มีรายชื่อที่คุณต้องประเมิน หากคิดว่าไม่ถูกต้อง กรุณาติดต่อ HR</div>';
+  SEC.forEach(function(sec){
+    var list = t.filter(function(x){return x.rel===sec.rel;});
+    if(!list.length) return;
+    var d = list.filter(function(x){return x.done;}).length;
+    html += '<div class="sec-h"><span>'+sec.title+'</span><span class="muted small">'+d+'/'+list.length+'</span></div>';
+    list.forEach(function(x){
+      html += '<button class="task" data-id="'+esc(x.id)+'"><div class="avatar">'+initial(x.nick||x.name)+'</div>'+
+        '<div class="t"><div class="n">'+fullName(x)+'</div><div class="muted small">'+esc(x.position)+' · '+esc(x.branchName)+(x.team?' '+esc(x.team):'')+'</div></div>'+
+        (x.done ? '<span class="pill p-ok">ส่งแล้ว</span>' : '<span class="pill p-wait">ยังไม่ประเมิน</span>')+'</button>';
+    });
+  });
+  html += '</div>';
+  app.innerHTML = html; toTop();
+  document.getElementById('out').onclick = function(){ S.me=null; S.pin=''; viewLogin(); };
+  Array.prototype.forEach.call(app.querySelectorAll('.task'), function(b){
+    b.onclick = function(){ openForm(b.getAttribute('data-id')); };
+  });
+}
+
+function openForm(rid){
+  var x = S.tasks.filter(function(t){return t.id===rid;})[0];
+  S.cur = x; S.ans = {}; S.txt = {Q1:'',Q2:'',Q3:''};
+  var go = function(){ viewForm(); };
+  if(x.done){
+    call('apiMyAnswer', S.id, S.pin, rid).then(function(a){
+      if(a){ Object.keys(a.scores).forEach(function(k){ S.ans[k] = a.scores[k]==null ? 'NA' : a.scores[k]; });
+             S.txt = {Q1:a.Q1||'',Q2:a.Q2||'',Q3:a.Q3||''}; }
+      go();
+    }).catch(function(e){ alert(errMsg(e)); });
+  } else go();
+}
+
+function levelText(v){
+  if(v==null) return '';
+  var key = v==='NA' ? 'N/A' : String(v);
+  var s = S.info.scale.filter(function(r){return r.score===key;})[0];
+  return s ? (key+' = '+s.level+' – '+s.desc) : '';
+}
+
+function viewForm(){
+  var x = S.cur, i = S.info, self = x.rel==='ตนเอง', sec = secOf(x.rel);
+  var cats = []; i.items.forEach(function(it){ if(cats.indexOf(it.cat)<0) cats.push(it.cat); });
+  var html = '<div class="sticky"><div class="wrap" style="display:flex;align-items:center;gap:12px">'+
+      '<button class="btn ghost sm" id="back">‹ กลับ</button>'+
+      '<div style="flex:1;min-width:0"><div class="who" style="font-size:15.5px">'+fullName(x)+'</div><div class="muted tiny">'+sec.tag+' · '+esc(x.position)+'</div></div>'+
+      '<span class="pill p-wait" id="cnt"></span></div></div>'+
+    '<div class="wrap">'+
+    '<div class="card"><b>เกณฑ์การให้คะแนน</b>'+
+      '<div class="legend">'+i.scale.map(function(s){return '<b>'+esc(s.score)+'</b><span>'+esc(s.level)+' – '+esc(s.desc)+'</span>';}).join('')+'</div>'+
+      '<div class="small muted" style="margin-top:8px">ให้คะแนนจาก<b>พฤติกรรมที่เห็นจริง</b>ในช่วง 6–12 เดือนที่ผ่านมา'+(self?' ของตัวคุณเอง':'')+' ถ้าไม่เคยเห็นให้เลือก N/A</div>'+
+    '</div>';
+  cats.forEach(function(c){
+    html += '<div class="card cat"><h3>'+esc(c)+'</h3>';
+    i.items.filter(function(it){return it.cat===c;}).forEach(function(it){
+      var v = S.ans[it.code];
+      html += '<div class="q" id="q_'+it.code+'"><div class="txt"><span class="code">'+esc(it.code)+'</span>'+esc(it.text)+'</div><div class="scale">';
+      [1,2,3,4,5].forEach(function(n){ html += '<button type="button" data-c="'+it.code+'" data-v="'+n+'" class="'+(v===n?'on':'')+'">'+n+'</button>'; });
+      html += '<button type="button" class="na '+(v==='NA'?'on':'')+'" data-c="'+it.code+'" data-v="NA">N/A</button></div>'+
+              '<div class="lvl" id="l_'+it.code+'">'+esc(levelText(v))+'</div></div>';
+    });
+    html += '</div>';
+  });
+  html += '<div class="card"><h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">ความคิดเห็นเพิ่มเติม</h3>';
+  i.openQ.forEach(function(q){
+    var label = self ? q.text.replace('อยากให้เขา','อยากให้ตัวเอง') : q.text;
+    html += '<label class="f" for="t_'+q.code+'">'+esc(label)+'</label><textarea class="inp" id="t_'+q.code+'">'+esc(S.txt[q.code]||'')+'</textarea>';
+  });
+  html += '</div><div id="ferr"></div></div>'+
+    '<div class="foot"><div class="wrap" style="padding:0"><button class="btn block" id="send" '+(i.isOpen?'':'disabled')+'>'+(x.done?'บันทึกการแก้ไข':'ส่งแบบประเมิน')+'</button></div></div>';
+  app.innerHTML = html; toTop(); count();
+  document.getElementById('back').onclick = function(){ viewList(); };
+  Array.prototype.forEach.call(app.querySelectorAll('.scale button'), function(b){
+    b.onclick = function(){
+      var c=b.getAttribute('data-c'), v=b.getAttribute('data-v'); v = v==='NA'?'NA':+v;
+      S.ans[c]=v;
+      Array.prototype.forEach.call(b.parentNode.children,function(k){k.classList.toggle('on',k===b);});
+      document.getElementById('l_'+c).textContent = levelText(v);
+      document.getElementById('q_'+c).classList.remove('miss');
+      count();
+    };
+  });
+  document.getElementById('send').onclick = submit;
+}
+function count(){
+  var n = S.info.items.filter(function(it){return S.ans[it.code]!=null;}).length;
+  var el = document.getElementById('cnt'); el.textContent = n+'/'+S.info.items.length;
+  el.className = 'pill '+(n===S.info.items.length?'p-ok':'p-wait');
+}
+function submit(){
+  var miss = S.info.items.filter(function(it){return S.ans[it.code]==null;});
+  if(miss.length){
+    miss.forEach(function(it){ document.getElementById('q_'+it.code).classList.add('miss'); });
+    document.getElementById('ferr').innerHTML = '<div class="err">ยังไม่ได้ให้คะแนน '+miss.length+' ข้อ ('+miss.map(function(m){return m.code;}).join(', ')+')</div>';
+    document.getElementById('q_'+miss[0].code).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  var data = { rateeId:S.cur.id, scores:S.ans };
+  S.info.openQ.forEach(function(q){ data[q.code] = document.getElementById('t_'+q.code).value.trim(); });
+  call('apiSubmit', S.id, S.pin, data).then(function(r){ S.tasks=r.tasks; viewDone(); })
+    .catch(function(e){ document.getElementById('ferr').innerHTML='<div class="err">'+esc(errMsg(e))+'</div>'; });
+}
+function viewDone(){
+  var left = S.tasks.filter(function(t){return !t.done;});
+  app.innerHTML = '<div class="wrap"><div class="card center" style="margin-top:40px;padding:32px 20px">'+
+    '<div class="done-ico">✓</div><h2 style="margin:0 0 6px">บันทึกเรียบร้อย</h2>'+
+    '<div class="muted">ประเมิน '+fullName(S.cur)+' แล้ว</div>'+
+    '<div style="margin:18px 0 6px">'+(left.length ? 'เหลืออีก <b>'+left.length+'</b> ฉบับ' : '<b style="color:var(--good)">คุณประเมินครบทุกฉบับแล้ว ขอบคุณค่ะ</b>')+'</div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">'+
+      (left.length ? '<button class="btn" id="nx">ประเมินคนถัดไป ›</button>' : '')+
+      '<button class="btn ghost" id="ls">ดูรายชื่อทั้งหมด</button></div></div></div>';
+  toTop();
+  if(left.length) document.getElementById('nx').onclick = function(){ openForm(left[0].id); };
+  document.getElementById('ls').onclick = viewList;
+}
+
+/* ======================= views: HR ======================= */
+function viewHrLogin(error){
+  app.innerHTML = '<div class="wrap" style="max-width:440px;margin-top:40px"><div class="card">'+
+    '<h2 style="margin:0 0 4px;color:var(--navy)">สำหรับ HR</h2><div class="muted small">ติดตามการตอบและดูรายงานรายบุคคล</div>'+
+    '<form id="hf"><label class="f" for="pw">รหัสผ่าน HR</label><input class="inp" id="pw" type="password">'+
+    (error?'<div class="err">'+esc(error)+'</div>':'')+
+    '<div style="height:14px"></div><button class="btn block">เข้าสู่ระบบ</button></form>'+
+    '<div class="center small" style="margin-top:14px"><button class="link" id="bk">‹ กลับหน้าผู้ประเมิน</button></div></div></div>';
+  document.getElementById('hf').onsubmit = function(ev){ ev.preventDefault();
+    S.pw = document.getElementById('pw').value; loadAdmin(function(e){ viewHrLogin(e); }); };
+  document.getElementById('bk').onclick = function(){ viewLogin(); };
+}
+function loadAdmin(onErr){
+  call('apiAdmin', S.pw).then(function(d){ S.admin=d; viewAdmin(); })
+    .catch(function(e){ (onErr||alert)(errMsg(e)); });
+}
+function relMini(b){
+  var lab = {'หัวหน้า':'หัวหน้า','เพื่อน':'เพื่อน','ลูกน้อง':'ลูกน้อง','ตนเอง':'ตนเอง'};
+  return ['ตนเอง','หัวหน้า','เพื่อน','ลูกน้อง'].filter(function(k){return b[k].total;}).map(function(k){
+    var full = b[k].done===b[k].total;
+    return lab[k]+' <b style="color:'+(full?'var(--good)':'var(--ink)')+'">'+b[k].done+'/'+b[k].total+'</b>';
+  }).join(' · ');
+}
+function viewAdmin(){
+  var d = S.admin;
+  var pct = d.totalForms ? Math.round(d.doneForms*100/d.totalForms) : 0;
+  var ratersDone = d.raters.filter(function(r){return r.done===r.total;}).length;
+  var withScore = d.ratees.filter(function(r){return r.overall!=null;}).length;
+  var html = '<div class="wrap wide">'+
+    '<div class="topbar"><div><div class="muted small">HR Dashboard · อัปเดต '+esc(d.updated)+(d.testMode?' · <span class="pill p-mid">โหมดทดสอบ</span>':'')+'</div>'+
+      '<div class="who" style="font-size:20px">'+esc(d.title)+'</div><div class="muted small">'+thDate(d.openDate)+' – '+thDate(d.closeDate)+'</div></div>'+
+      '<div style="display:flex;gap:8px"><button class="btn ghost sm" id="rf">รีเฟรช</button><button class="btn ghost sm" id="lo">ออก</button></div></div>'+
+    '<div class="kpis">'+
+      '<div class="kpi"><div class="v">'+pct+'%</div><div class="l">ส่งแล้ว '+d.doneForms+' จาก '+d.totalForms+' ฉบับ</div><div class="progress" style="margin-top:8px"><i style="width:'+pct+'%"></i></div></div>'+
+      '<div class="kpi"><div class="v">'+ratersDone+' / '+d.raters.length+'</div><div class="l">ผู้ประเมินที่ส่งครบแล้ว</div></div>'+
+      '<div class="kpi"><div class="v">'+withScore+' / '+d.ratees.length+'</div><div class="l">ผู้ถูกประเมินที่มีคะแนนแล้ว</div></div>'+
+    '</div>'+
+    '<div class="tabs"><button data-t="ratee" class="'+(S.tab==='ratee'?'on':'')+'">ผลรายบุคคล ('+d.ratees.length+')</button>'+
+      '<button data-t="rater" class="'+(S.tab==='rater'?'on':'')+'">ติดตามผู้ประเมิน ('+d.raters.length+')</button></div>'+
+    '<div class="card" style="padding:8px 14px">'+(S.tab==='ratee'?rateeTable(d):raterTable(d))+'</div></div>';
+  app.innerHTML = html;
+  document.getElementById('rf').onclick = function(){ loadAdmin(); };
+  document.getElementById('lo').onclick = function(){ S.pw=''; S.admin=null; viewLogin(); };
+  Array.prototype.forEach.call(app.querySelectorAll('.tabs button'),function(b){ b.onclick=function(){ S.tab=b.getAttribute('data-t'); viewAdmin(); }; });
+  Array.prototype.forEach.call(app.querySelectorAll('[data-rep]'),function(b){ b.onclick=function(){ openReport(b.getAttribute('data-rep')); }; });
+  var op = document.getElementById('op'); if(op) op.onchange=function(){ S.onlyPending=op.checked; viewAdmin(); };
+  var cp = document.getElementById('cp'); if(cp) cp.onclick=copyPending;
+}
+var POS_ORDER = ['ผู้จัดการทั่วไป','ผู้จัดการ','ผู้ช่วยผู้จัดการ','หัวหน้าทีม'];
+function rateeTable(d){
+  var rows = d.ratees.slice().sort(function(a,b){ return POS_ORDER.indexOf(a.position)-POS_ORDER.indexOf(b.position) || a.branchName.localeCompare(b.branchName,'th'); });
+  var h = '<div class="scroll"><table class="t"><thead><tr><th>ผู้ถูกประเมิน</th><th>ตำแหน่ง / สาขา</th><th>การตอบกลับ</th><th class="num">ตนเอง</th><th class="num">คะแนนถ่วงน้ำหนัก</th><th>ผล</th><th></th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    h += '<tr><td>'+fullName(r)+'</td><td class="small">'+esc(r.position)+'<br><span class="muted">'+esc(r.branchName)+(r.team?' '+esc(r.team):'')+'</span></td>'+
+      '<td><div class="relmini">'+relMini(r.byRel)+'</div><div class="progress" style="height:6px;margin-top:6px;max-width:220px"><i style="width:'+(r.total?Math.round(r.done*100/r.total):0)+'%"></i></div></td>'+
+      '<td class="num">'+cell(r.selfOverall)+'</td><td class="num">'+cell(r.overall)+'</td><td>'+vPill(r.verdict)+'</td>'+
+      '<td><button class="btn ghost sm" data-rep="'+esc(r.id)+'">รายงาน</button></td></tr>';
+  });
+  return h+'</tbody></table></div><div class="tiny muted" style="padding:8px 0">คะแนนเป็นค่าระหว่างเก็บข้อมูล จะนิ่งเมื่อปิดการประเมิน · ตนเองไม่นำไปคิดคะแนน</div>';
+}
+function raterTable(d){
+  var q = S.filter.toLowerCase();
+  var rows = d.raters.filter(function(r){ return !S.onlyPending || r.done<r.total; })
+    .sort(function(a,b){ return a.branchName.localeCompare(b.branchName,'th') || (a.done/a.total)-(b.done/b.total); });
+  var h = '<div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 0">'+
+    '<label class="small"><input type="checkbox" id="op" '+(S.onlyPending?'checked':'')+'> แสดงเฉพาะคนที่ยังส่งไม่ครบ</label>'+
+    '<button class="btn sm" id="cp">ข้อความติดตามสำหรับ LINE</button></div>'+
+    '<div class="scroll"><table class="t"><thead><tr><th>ผู้ประเมิน</th><th>สาขา</th><th class="num">ส่งแล้ว</th><th>ที่ยังค้าง</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    h += '<tr><td>'+fullName(r)+'<div class="tiny muted">'+esc(r.id)+' · '+esc(r.position)+'</div></td><td class="small">'+esc(r.branchName)+(r.team?' '+esc(r.team):'')+'</td>'+
+      '<td class="num"><span class="pill '+(r.done===r.total?'p-ok':r.done?'p-mid':'p-wait')+'">'+r.done+'/'+r.total+'</span></td>'+
+      '<td class="small">'+(r.pending.length?r.pending.map(esc).join('<br>'):'<span style="color:var(--good)">ครบ</span>')+'</td></tr>';
+  });
+  if(!rows.length) h += '<tr><td colspan="4" class="muted center" style="padding:20px">ทุกคนส่งครบแล้ว 🎉</td></tr>';
+  return h+'</tbody></table></div>';
+}
+function copyPending(){
+  var d = S.admin, by = {};
+  d.raters.filter(function(r){return r.done<r.total;}).forEach(function(r){
+    (by[r.branchName] = by[r.branchName]||[]).push('- '+(r.nick?r.nick+' ':'')+r.name+' ('+r.done+'/'+r.total+')');
+  });
+  var txt = '📋 '+d.title+'\nรายชื่อที่ยังประเมินไม่ครบ (ข้อมูล '+d.updated+')\nปิดประเมิน '+thDate(d.closeDate)+'\n';
+  Object.keys(by).sort().forEach(function(b){ txt += '\n'+b+'\n'+by[b].join('\n')+'\n'; });
+  if(!Object.keys(by).length) txt += '\nทุกคนส่งครบแล้ว ขอบคุณค่ะ 🙏';
+  var m = document.createElement('div'); m.className='modal';
+  m.innerHTML = '<div class="card"><b>ข้อความติดตาม (คัดลอกไปวางใน LINE)</b><textarea class="inp" style="min-height:300px;margin-top:10px;font-size:14px" id="ptx"></textarea>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button class="btn ghost sm" id="mc">ปิด</button><button class="btn sm" id="mk">คัดลอก</button></div></div>';
+  document.body.appendChild(m);
+  var ta = document.getElementById('ptx'); ta.value = txt;
+  document.getElementById('mc').onclick = function(){ m.remove(); };
+  document.getElementById('mk').onclick = function(){ ta.select(); try{document.execCommand('copy');}catch(e){} this.textContent='คัดลอกแล้ว ✓'; };
+}
+
+/* ======================= report ======================= */
+function openReport(id){
+  call('apiReport', S.pw, id).then(viewReport).catch(function(e){ alert(errMsg(e)); });
+}
+var COL = {self:'#9aa5b1', w:'#173f68'};
+function radar(cats, w, self){
+  var n=cats.length, cx=260, cy=170, R=118, pts=function(vals){
+    return vals.map(function(v,i){ var a=-Math.PI/2+i*2*Math.PI/n, r=R*((v||0)/5); return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; });
+  };
+  var s = '<svg viewBox="0 0 520 330" width="100%" style="max-width:520px;display:block;margin:auto" font-family="Sarabun,sans-serif">';
+  [1,2,3,4,5].forEach(function(l){
+    var p = cats.map(function(_,i){ var a=-Math.PI/2+i*2*Math.PI/n, r=R*l/5; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
+    s += '<polygon points="'+p+'" fill="none" stroke="'+(l===3||l===4?'#c9d3de':'#e6ebf1')+'" stroke-dasharray="'+(l===4?'4 3':'')+'"/>';
+  });
+  cats.forEach(function(c,i){
+    var a=-Math.PI/2+i*2*Math.PI/n, x=cx+(R+14)*Math.cos(a), y=cy+(R+14)*Math.sin(a);
+    s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(a))+'" y2="'+(cy+R*Math.sin(a))+'" stroke="#e6ebf1"/>';
+    var anchor = Math.abs(Math.cos(a))<0.2?'middle':(Math.cos(a)>0?'start':'end');
+    var label = c.replace(/^[A-Z]\.\s*/,'').split('และ')[0], letter=(c.match(/^([A-Z])\./)||[])[1]||'';
+    s += '<text x="'+x.toFixed(1)+'" y="'+(y+ (Math.sin(a)>0.5?10:Math.sin(a)<-0.5?-4:4)).toFixed(1)+'" font-size="12.5" fill="#1b2430" text-anchor="'+anchor+'"><tspan font-weight="700">'+letter+'</tspan> '+esc(label)+'</text>';
+  });
+  if(self){ var ps=pts(self); s += '<polygon points="'+ps.map(function(p){return p.join(',');}).join(' ')+'" fill="rgba(154,165,177,.15)" stroke="'+COL.self+'" stroke-width="2" stroke-dasharray="5 3"/>'; }
+  var pw=pts(w); s += '<polygon points="'+pw.map(function(p){return p.join(',');}).join(' ')+'" fill="rgba(23,63,104,.18)" stroke="'+COL.w+'" stroke-width="2.5"/>';
+  pw.forEach(function(p,i){ if(w[i]!=null) s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+COL.w+'"/>'; });
+  [3,4].forEach(function(l){ s += '<text x="'+(cx+3)+'" y="'+(cy-R*l/5-2)+'" font-size="10" fill="#9aa5b1">'+l+'</text>'; });
+  return s+'</svg>';
+}
+function viewReport(r){
+  var p=r.person, sc=r.score, cats=r.cats, groups=sc.groups.filter(function(g){return g.n>0;});
+  var selfCat = sc.self ? cats.map(function(c){return sc.self.cat[c];}) : null;
+  var gap = (sc.self && sc.overall!=null) ? sc.self.overall - sc.overall : null;
+
+  // items ranking & flags
+  var its = r.items.map(function(it){ return {it:it, o:sc.item[it.code], s:sc.self?sc.self.item[it.code]:null}; });
+  var ranked = its.filter(function(x){return x.o!=null;}).slice().sort(function(a,b){return b.o-a.o;});
+  var topSet = ranked.slice(0,3).map(function(x){return x.it.code;}), lowSet = ranked.length>=6 ? ranked.slice(-3).map(function(x){return x.it.code;}) : [];
+
+  var asg = r.assigned, relLabel = {'ตนเอง':'ตนเอง','หัวหน้า':'หัวหน้า','เพื่อน':'เพื่อนร่วมงาน','ลูกน้อง':'ลูกน้อง'};
+  var respRows = ['ตนเอง','หัวหน้า','เพื่อน','ลูกน้อง'].filter(function(k){return asg[k];}).map(function(k){
+    var n = k==='ตนเอง' ? (sc.self?1:0) : (function(){ var g=sc.groups.filter(function(g){return g.key===k;})[0]; if(sc.subFew && k==='ลูกน้อง') return null; return g?g.n:0; })();
+    return '<tr><td>'+relLabel[k]+'</td><td class="num">'+(n==null?'(รวมกับเพื่อน)':n+' / '+asg[k])+'</td></tr>';
+  }).join('');
+  var wRows = groups.map(function(g){ return '<tr><td>'+esc(g.label)+'</td><td class="num">'+g.weight+'%</td><td class="num">'+Math.round(g.effWeight*100)+'%</td></tr>'; }).join('');
+
+  var html = '<div class="wrap wide rp">'+
+   '<div class="noprint" style="display:flex;justify-content:space-between;margin-bottom:12px"><button class="btn ghost sm" id="bk">‹ กลับ Dashboard</button><button class="btn sm" id="pr">พิมพ์ / บันทึก PDF</button></div>'+
+   '<div class="card"><div class="rp-head"><div><div class="muted small">รายงานผลการประเมิน 360 องศา · '+esc(S.admin?S.admin.title:'')+'</div>'+
+     '<div class="who" style="font-size:24px;margin-top:4px">'+fullName(p)+'</div>'+
+     '<div class="muted">'+esc(p.position)+' · '+esc(p.branchName)+(p.team?' '+esc(p.team):'')+'</div></div>'+
+     '<div style="text-align:right"><div class="muted small">คะแนนถ่วงน้ำหนัก (ไม่รวมตนเอง)</div><div class="big">'+f2(sc.overall)+'</div><div style="margin-top:6px">'+vPill(sc.verdict)+'</div></div></div>'+
+     (sc.capped?'<div class="note" style="margin-top:12px">คะแนนรวม ≥ 4.00 แต่มีหมวดต่ำกว่า 3.00 จึงยังจัดอยู่ในกลุ่ม “พัฒนาต่อ”</div>':'')+
+     '<div class="grid2" style="margin-top:14px">'+
+       '<div><table class="t"><thead><tr><th>ผู้ประเมิน</th><th class="num">ตอบกลับ / ทั้งหมด</th></tr></thead><tbody>'+respRows+'</tbody></table></div>'+
+       '<div><table class="t"><thead><tr><th>กลุ่มที่ใช้คิดคะแนน</th><th class="num">น้ำหนักตามเกณฑ์</th><th class="num">น้ำหนักที่ใช้จริง</th></tr></thead><tbody>'+(wRows||'<tr><td colspan="3" class="muted">ยังไม่มีข้อมูล</td></tr>')+'</tbody></table>'+
+       (sc.subFew?'<div class="tiny muted" style="margin-top:6px">ลูกน้องตอบน้อยกว่า '+r.minSub+' คน จึงรวมกับกลุ่มเพื่อนร่วมงาน</div>':'')+'</div>'+
+     '</div>'+
+     '<div class="small" style="margin-top:12px">คะแนนตนเอง <b>'+f2(sc.self?sc.self.overall:null)+'</b>'+
+       (gap!=null?' · ต่างจากมุมมองผู้อื่น <b style="color:'+(Math.abs(gap)>=0.5?'var(--bad)':'var(--ink)')+'">'+(gap>0?'+':'')+gap.toFixed(2)+'</b> '+(gap>=0.5?'(มองตัวเองสูงกว่าที่ผู้อื่นเห็น)':gap<=-0.5?'(มองตัวเองต่ำกว่าที่ผู้อื่นเห็น)':'(มุมมองใกล้เคียงกัน)'):'')+'</div>'+
+   '</div>';
+
+  // categories
+  html += '<div class="grid2"><div class="card"><h2>ภาพรวมรายหมวด</h2>'+radar(cats, cats.map(function(c){return sc.cat[c];}), selfCat)+
+    '<div class="lg" style="justify-content:center"><span><i style="background:'+COL.w+'"></i>ผู้อื่น (ถ่วงน้ำหนัก)</span>'+(selfCat?'<span><i style="background:'+COL.self+'"></i>ตนเอง</span>':'')+'</div></div>';
+  html += '<div class="card"><h2>คะแนนรายหมวดแยกกลุ่ม</h2><div class="scroll"><table class="t"><thead><tr><th>หมวด</th><th class="num">ตนเอง</th>'+
+    groups.map(function(g){return '<th class="num">'+esc(g.label)+'<div class="tiny">n='+g.n+'</div></th>';}).join('')+'<th class="num">ถ่วงน้ำหนัก</th></tr></thead><tbody>';
+  cats.forEach(function(c){
+    html += '<tr><td class="small">'+esc(c)+'</td><td class="num">'+cell(sc.self?sc.self.cat[c]:null)+'</td>'+
+      groups.map(function(g){return '<td class="num">'+cell(g.stats.cat[c])+'</td>';}).join('')+
+      '<td class="num"><b>'+cell(sc.cat[c])+'</b></td></tr>';
+  });
+  html += '<tr><td><b>เฉลี่ย</b></td><td class="num">'+cell(sc.self?sc.self.overall:null)+'</td>'+groups.map(function(g){return '<td class="num">'+cell(g.stats.overall)+'</td>';}).join('')+'<td class="num"><b>'+cell(sc.overall)+'</b></td></tr>';
+  html += '</tbody></table></div><div class="lg" style="margin-top:10px"><span><i style="background:var(--goodbg)"></i>≥ 4.00</span><span><i style="background:var(--midbg)"></i>3.50–3.99</span><span><i style="background:var(--badbg)"></i>&lt; 3.50</span></div></div></div>';
+
+  // items
+  html += '<div class="card brk"><h2>คะแนนรายข้อ</h2><div class="lg" style="margin-bottom:8px">'+
+    '<span><span class="flag f-s">จุดแข็ง</span> 3 ข้อสูงสุด</span><span><span class="flag f-d">ควรพัฒนา</span> 3 ข้อต่ำสุด</span>'+
+    '<span><span class="flag f-b">จุดบอด</span> ตนเองให้สูงกว่าผู้อื่น ≥ 1</span><span><span class="flag f-h">จุดแข็งซ่อนอยู่</span> ผู้อื่นให้สูงกว่าตนเอง ≥ 1</span></div>'+
+    '<div class="scroll"><table class="t"><thead><tr><th>ข้อ</th><th>พฤติกรรม</th><th class="num">ตนเอง</th><th class="num">ผู้อื่น</th><th class="num">ต่าง</th></tr></thead><tbody>';
+  var lastCat='';
+  its.forEach(function(x){
+    if(x.it.cat!==lastCat){ lastCat=x.it.cat; html+='<tr><td colspan="5" style="background:#f6f8fb;font-weight:700;color:var(--navy);font-size:13.5px">'+esc(lastCat)+'</td></tr>'; }
+    var g = (x.s!=null && x.o!=null) ? x.s-x.o : null, fl='';
+    if(topSet.indexOf(x.it.code)>=0) fl+='<span class="flag f-s">จุดแข็ง</span>';
+    if(lowSet.indexOf(x.it.code)>=0) fl+='<span class="flag f-d">ควรพัฒนา</span>';
+    if(g!=null && g>=1) fl+='<span class="flag f-b">จุดบอด</span>';
+    if(g!=null && g<=-1) fl+='<span class="flag f-h">จุดแข็งซ่อนอยู่</span>';
+    html += '<tr><td><b>'+esc(x.it.code)+'</b></td><td class="small">'+esc(x.it.text)+' '+fl+'</td><td class="num">'+cell(x.s)+'</td><td class="num"><b>'+cell(x.o)+'</b></td>'+
+      '<td class="num small">'+(g==null?'–':(g>0?'+':'')+g.toFixed(2))+'</td></tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  // comments
+  var qs = (S.info && S.info.openQ) || [{code:'Q1',text:'จุดแข็ง'},{code:'Q2',text:'สิ่งที่ควรปรับ'},{code:'Q3',text:'ความเห็นอื่น ๆ'}];
+  html += '<div class="card cm-sec"><h2>ความคิดเห็นจากผู้ประเมิน</h2><div class="tiny muted">แสดงตามกลุ่ม ไม่ระบุชื่อผู้ตอบ</div>';
+  qs.forEach(function(q){
+    var list = r.comments[q.code]||[];
+    html += '<h3>'+esc(q.text)+'</h3>'+(list.length ? list.map(function(c){return '<div class="cm"><div class="g">'+esc(c.group)+'</div>'+esc(c.text).replace(/\n/g,'<br>')+'</div>';}).join('') : '<div class="muted small">– ไม่มี –</div>');
+  });
+  html += '</div><div class="tiny muted" style="text-align:right;margin-bottom:20px">สร้างรายงาน '+esc(r.generated)+' · เกณฑ์: หัวหน้า '+r.weights['หัวหน้า']+'% · เพื่อน '+r.weights['เพื่อน']+'% · ลูกน้อง '+r.weights['ลูกน้อง']+'% · ตนเองไม่คิดคะแนน</div></div>';
+  app.innerHTML = html; toTop();
+  document.getElementById('bk').onclick = viewAdmin;
+  document.getElementById('pr').onclick = function(){ window.print(); };
+}
+
+/* ======================= boot ======================= */
+if('serviceWorker' in navigator && location.protocol==='https:'){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
+if(!window.RIS360_CONFIG || !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]{20,}\/exec$/.test(window.RIS360_CONFIG.API_URL||'')){
+  app.innerHTML='<div class="wrap"><div class="card err">ยังไม่ได้ตั้งค่า API_URL ในไฟล์ config.js (ดูขั้นตอนใน README)</div></div>';
+} else
+call('apiInfo').then(function(i){ S.info=i; viewLogin(); })
+  .catch(function(e){ app.innerHTML='<div class="wrap"><div class="card err">โหลดระบบไม่สำเร็จ: '+esc(errMsg(e))+'</div></div>'; });
+</script>
+</body>
+</html>
