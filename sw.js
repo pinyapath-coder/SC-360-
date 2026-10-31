@@ -1,6 +1,6 @@
 // Service worker: เก็บไฟล์หน้าแอปไว้ให้เปิดเร็ว (ข้อมูลประเมินดึงจากเซิร์ฟเวอร์ทุกครั้ง)
 // เมื่อแก้ไฟล์แอป ให้เปลี่ยนเลขเวอร์ชันด้านล่าง ผู้ใช้จะได้ไฟล์ใหม่อัตโนมัติ
-var CACHE = 'ris360-v1';
+var CACHE = 'ris360-v6';
 var SHELL = ['./', 'index.html', 'config.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', function (e) {
