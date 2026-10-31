@@ -118,6 +118,22 @@ table.t td.num,table.t th.num{text-align:right;font-variant-numeric:tabular-nums
 .cm .g{font-size:12.5px;font-weight:600;color:var(--muted)}
 .cm-sec h3{font-size:15px;margin:16px 0 4px}
 .lg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.an-card h2{margin-bottom:4px}
+.pair{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
+.pair-an{border-left:1px solid var(--line);padding-left:18px}
+.pair-an .an-sec:first-child,.pair .an-card>.an-sec:first-child{margin-top:4px}
+.print-only{display:none}
+.appx-h{font-weight:700;color:var(--muted);margin:26px 4px 10px;font-size:14px;letter-spacing:.02em}
+@media(max-width:900px){.pair{grid-template-columns:1fr}.pair-an{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:6px}}
+.an-sec{border-left:4px solid #c9d3de;padding:2px 0 2px 14px;margin:14px 0}
+.an-sec h3{margin:0 0 4px;font-size:15px;color:var(--navy)}
+.an-sec p{margin:4px 0}
+.an-sec.good{border-color:var(--good)} .an-sec.bad{border-color:#e08a7f} .an-sec.plan{border-color:var(--navy2)} .an-sec.muted-sec{border-color:#e3e8ee}
+ul.an{margin:4px 0;padding-left:20px} ul.an li{margin:3px 0}
+.idp{margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:6px}
+.chip{display:inline-flex;align-items:center;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-size:13px;color:var(--muted)}
+.chip.on{border-color:#9fb3c8;background:#f1f5fa;color:var(--ink);font-weight:600}
 .lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 @media print{
   @page{size:A4;margin:12mm}
@@ -127,10 +143,44 @@ table.t td.num,table.t th.num{text-align:right;font-variant-numeric:tabular-nums
   .wrap{max-width:none;padding:0}
   .grid2{grid-template-columns:1fr;gap:0}
   .cm-sec,.brk{break-inside:auto}
-  .rp svg{max-width:340px!important}
+  .rp svg.radar{max-width:420px!important}
+  .pair{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px}
+  .pair-card{break-inside:avoid}
+  .an-sec{margin:8px 0} .an-sec h3{font-size:12.5px} ul.an li{margin:1px 0}
+  .appx-h{break-before:page}
+  .chip:not(.on){display:none}
+  #tip{display:none!important}
   table.t td,table.t th{padding:5px 6px}
   tr{break-inside:avoid}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .print-only{display:block}
+  /* ---- สรุป 2 หน้า ---- */
+  body:not(.print-full){font-size:10.5px;line-height:1.4}
+  body:not(.print-full) .appx{display:none}
+  body:not(.print-full) .hdr-tables{display:none}
+  body:not(.print-full) .chips{display:none}
+  body:not(.print-full) .rp .card{padding:8px 12px;margin-bottom:6px;border-radius:8px}
+  body:not(.print-full) .rp h2{font-size:12.5px;margin:0 0 4px}
+  body:not(.print-full) .rp .who{font-size:17px!important}
+  body:not(.print-full) .rp .big{font-size:30px}
+  body:not(.print-full) .rp svg.radar{max-width:290px!important}
+  body:not(.print-full) .pair{gap:12px}
+  body:not(.print-full) .pair-an{padding-left:12px}
+  body:not(.print-full) .an-sec{margin:5px 0;padding-left:9px;border-left-width:3px}
+  body:not(.print-full) .an-sec h3{font-size:11px;margin-bottom:1px}
+  body:not(.print-full) .an-sec p{margin:2px 0}
+  body:not(.print-full) ul.an{margin:2px 0;padding-left:15px}
+  body:not(.print-full) ul.an li{margin:0}
+  body:not(.print-full) .idp{margin:4px 0}
+  body:not(.print-full) .lg{font-size:9.5px;gap:8px}
+  body:not(.print-full) .tiny{font-size:9px}
+  body:not(.print-full) .cell{min-width:34px;padding:0 4px}
+  body:not(.print-full) .p2{break-before:page}
+  body:not(.print-full) .rp-foot{margin:4px 0 0!important}
+  body:not(.print-full) .rp .small{font-size:10px}
+  body:not(.print-full) .rp-head{flex-wrap:nowrap;align-items:center}
+  body:not(.print-full) .rp .muted.small{font-size:9.5px}
+  body:not(.print-full) .rp svg.radar{max-width:330px!important}
 }
 </style>
 </head>
@@ -394,6 +444,8 @@ function viewAdmin(){
     '</div>'+
     '<div class="tabs"><button data-t="ratee" class="'+(S.tab==='ratee'?'on':'')+'">ผลรายบุคคล ('+d.ratees.length+')</button>'+
       '<button data-t="rater" class="'+(S.tab==='rater'?'on':'')+'">ติดตามผู้ประเมิน ('+d.raters.length+')</button></div>'+
+    (S.tab==='ratee' ? analyzeTeam(d) : '')+
+    (S.tab==='ratee' && d.ratees.some(function(r){return r.overall!=null;}) ? '<div class="card"><h2 style="font-size:16px;color:var(--navy);margin:0 0 10px">กราฟเปรียบเทียบคะแนนรายบุคคล</h2>'+overviewChart(d.ratees)+'<div class="tiny muted">เรียงจากคะแนนสูงไปต่ำ · แตะหรือชี้ที่แถวเพื่อดูรายละเอียด · กดปุ่ม "รายงาน" ในตารางเพื่อดูกราฟของแต่ละคน</div></div>' : '')+
     '<div class="card" style="padding:8px 14px">'+(S.tab==='ratee'?rateeTable(d):raterTable(d))+'</div></div>';
   app.innerHTML = html;
   document.getElementById('rf').onclick = function(){ loadAdmin(); };
@@ -448,32 +500,331 @@ function copyPending(){
   document.getElementById('mk').onclick = function(){ ta.select(); try{document.execCommand('copy');}catch(e){} this.textContent='คัดลอกแล้ว ✓'; };
 }
 
+
+/* ======================= การวิเคราะห์อัตโนมัติ ======================= */
+// แนวทางพัฒนาแยกตามหมวด (หลัก 70-20-10: ลงมือทำ / เรียนจากคนอื่น / อบรม)
+var DEV = {
+  A: ['ประชุมทีมสั้น 15 นาทีทุกต้นสัปดาห์ เพื่อสื่อสารเป้าหมายและยอดที่ต้องทำให้ทุกคนเข้าใจตรงกัน',
+      'รับบทบาทประสานงานกับแผนกอื่น (เช่น ศูนย์บริการ, สินเชื่อ) อย่างน้อย 1 เรื่องในไตรมาสนี้',
+      'อบรม/เวิร์กช็อปการจัดการความขัดแย้งและการสร้างทีม'],
+  B: ['กำหนดเป้าหมายรายคนเป็นตัวเลขชัดเจน และติดตามความคืบหน้าทุกสัปดาห์',
+      'ทบทวนการมอบหมายงานให้เหมาะกับจุดแข็งของลูกทีมแต่ละคน',
+      'เตรียมแผนสำรองล่วงหน้าเมื่อยอดขายหรืองานไม่เป็นไปตามแผนกลางเดือน'],
+  C: ['คุย One-on-One กับลูกทีมคนละ 15 นาที ทุก 2 สัปดาห์ ให้ทั้งคำชมและคำแนะนำ',
+      'โค้ชหน้างาน: ร่วมฟังการเสนอขายแล้วให้ Feedback ทันที อย่างน้อยเดือนละ 2 ครั้งต่อคน',
+      'ชื่นชมและให้เครดิตผลงานลูกทีมต่อหน้าทีมหรือในที่ประชุม'],
+  D: ['ทบทวนความเสี่ยงและปัญหาที่อาจเกิดขึ้นในการประชุมประจำเดือน',
+      'ขอความเห็นจากทีมก่อนตัดสินใจเรื่องที่กระทบทีม และสื่อสารเหตุผลเมื่อตัดสินใจแล้ว',
+      'ทดลองไอเดียปรับปรุงวิธีทำงาน 1 เรื่องต่อไตรมาส แล้วสรุปผลให้ทีมฟัง'],
+  E: ['สรุปเรื่องสำคัญเป็นข้อความสั้นในกลุ่ม LINE ภายในวันเดียวกัน ให้ครบทั้งหัวหน้า เพื่อน และลูกทีม',
+      'ฝึกการฟังเชิงรุก: ฟังให้จบก่อนตอบ ทวนความเข้าใจ และขอ Feedback จากทีมเป็นประจำ',
+      'อาสารับงานใหม่หรือโครงการพิเศษ เพื่อฝึกการปรับตัวต่อการเปลี่ยนแปลง']
+};
+function catLetter(c){ return (c.match(/^([A-Z])\./)||[])[1]||''; }
+function catName(c){ return c.replace(/^[A-Z]\.\s*/,''); }
+function li(arr){ return arr.length ? '<ul class="an">'+arr.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>' : ''; }
+function sec(title, body, tone){ return body ? '<div class="an-sec '+(tone||'')+'"><h3>'+title+'</h3>'+body+'</div>' : ''; }
+function q(s){ return '“'+esc(s)+'”'; }
+
+function analyzePerson(r){
+  var sc=r.score, cats=r.cats, items=r.items, groups=sc.groups.filter(function(g){return g.n>0 && g.stats;});
+  var A={};
+  if(sc.overall==null){ A.summary='<div class="muted">ยังไม่มีคำตอบจากผู้ประเมินคนอื่น จึงยังวิเคราะห์ไม่ได้</div>'; return A; }
+  var out='', name=esc(r.person.nick||r.person.name.split(' ')[0]);
+
+  // 1) สรุปภาพรวม
+  var catSorted = cats.filter(function(c){return sc.cat[c]!=null;}).sort(function(a,b){return sc.cat[b]-sc.cat[a];});
+  var best=catSorted[0], worst=catSorted[catSorted.length-1];
+  var verdictTxt = { 'พร้อมเติบโต':'อยู่ในกลุ่ม <b>พร้อมเติบโต</b> คือพร้อมสำหรับการขึ้นระดับถัดไป',
+                     'พัฒนาต่อ':'อยู่ในกลุ่ม <b>พัฒนาต่อ</b> ควรพัฒนา 3–6 เดือนแล้วทบทวนอีกครั้ง',
+                     'ยังไม่พร้อม':'อยู่ในกลุ่ม <b>ยังไม่พร้อม</b> ควรเน้นพัฒนาในตำแหน่งปัจจุบันก่อน' }[sc.verdict]||'';
+  var sum = 'คะแนนถ่วงน้ำหนัก <b>'+f2(sc.overall)+'</b> '+verdictTxt+
+    (sc.capped ? ' (คะแนนรวมถึง 4.00 แต่หมวด '+esc(catName(worst))+' ต่ำกว่า 3.00 จึงยังไม่ผ่านเกณฑ์)' : '')+
+    ' · หมวดที่โดดเด่นที่สุดคือ <b>'+esc(catName(best))+'</b> ('+f2(sc.cat[best])+') ส่วนหมวดที่ควรให้ความสำคัญคือ <b>'+esc(catName(worst))+'</b> ('+f2(sc.cat[worst])+')';
+  var spread = sc.cat[best]-sc.cat[worst];
+  sum += spread < 0.3 ? ' โดยคะแนนทุกหมวดใกล้เคียงกัน (ต่างกันไม่ถึง 0.3) แสดงถึงความสม่ำเสมอ' : spread >= 0.8 ? ' และคะแนนระหว่างหมวดต่างกันค่อนข้างมาก ('+spread.toFixed(2)+') ควรเร่งพัฒนาหมวดที่ต่ำ' : '';
+  if(sc.overall>=4 && !sc.capped) { var gap4 = cats.filter(function(c){return sc.cat[c]!=null && sc.cat[c]<3.5;}); if(gap4.length) sum += ' แม้ภาพรวมจะดี แต่ยังมี '+gap4.length+' หมวดที่ต่ำกว่า 3.50'; }
+  else if(sc.overall<4){ var need = (4-sc.overall).toFixed(2); sum += ' ต้องเพิ่มอีก '+need+' คะแนนจึงจะถึงเกณฑ์พร้อมเติบโต'; }
+  A.summary = sec('สรุปภาพรวม','<p>'+sum+'</p>');
+
+  // 2) จุดแข็ง / จุดที่ควรพัฒนา (รายข้อ)
+  var its = items.filter(function(it){return sc.item[it.code]!=null;}).map(function(it){return {it:it, v:sc.item[it.code]};}).sort(function(a,b){return b.v-a.v;});
+  var top = its.slice(0,3), low = its.slice(-3).reverse().filter(function(x){ return top.indexOf(x)<0; });
+  A.strength = sec('จุดแข็ง (ผู้อื่นให้คะแนนสูงสุด)', li(top.map(function(x){return '<b>'+x.it.code+'</b> '+esc(x.it.text)+' – '+f2(x.v);})), 'good');
+  var lowTxt = low.map(function(x){return '<b>'+x.it.code+'</b> '+esc(x.it.text)+' – '+f2(x.v)+(x.v<3?' <span class="flag f-d">ต่ำกว่า 3</span>':'');});
+  var under = its.filter(function(x){return x.v<3.5;}).length;
+  A.weak = sec('จุดที่ควรพัฒนา (ผู้อื่นให้คะแนนต่ำสุด)', li(lowTxt)+(under?'<p class="small muted">มีทั้งหมด '+under+' ข้อจาก '+its.length+' ข้อที่ต่ำกว่า 3.50</p>':''), 'bad');
+
+  // 3) การรับรู้ตนเอง
+  if(sc.self && sc.self.overall!=null){
+    var g = sc.self.overall - sc.overall, t;
+    if(g>=0.5) t='ประเมินตนเองสูงกว่าที่ผู้อื่นเห็น <b>'+g.toFixed(2)+'</b> คะแนน แสดงว่าอาจยังไม่เห็นผลกระทบของพฤติกรรมตัวเองในบางเรื่อง ควรเปิดใจรับฟัง Feedback และถามทีมโดยตรงว่าอยากให้ปรับอะไร';
+    else if(g>=0.25) t='ประเมินตนเองสูงกว่าผู้อื่นเล็กน้อย ('+'+'+g.toFixed(2)+') ซึ่งพบได้ทั่วไป';
+    else if(g<=-0.5) t='ประเมินตนเองต่ำกว่าที่ผู้อื่นเห็น <b>'+Math.abs(g).toFixed(2)+'</b> คะแนน คนรอบข้างมองเห็นศักยภาพมากกว่าที่ตัวเองคิด ควรเสริมความมั่นใจและกล้ารับบทบาทที่ใหญ่ขึ้น';
+    else if(g<=-0.25) t='ประเมินตนเองต่ำกว่าผู้อื่นเล็กน้อย ('+g.toFixed(2)+') แสดงถึงความถ่อมตน';
+    else t='ประเมินตนเองใกล้เคียงกับที่ผู้อื่นเห็น (ต่าง '+(g>0?'+':'')+g.toFixed(2)+') แสดงว่ารู้จักตัวเองดี';
+    var blind = items.filter(function(it){ var s=sc.self.item[it.code], o=sc.item[it.code]; return s!=null && o!=null && s-o>=1; });
+    var hidden = items.filter(function(it){ var s=sc.self.item[it.code], o=sc.item[it.code]; return s!=null && o!=null && o-s>=1; });
+    var body = '<p>'+t+'</p>';
+    if(blind.length) body += '<p><span class="flag f-b">จุดบอด</span> เรื่องที่ให้คะแนนตัวเองสูงกว่าผู้อื่นตั้งแต่ 1 คะแนนขึ้นไป:</p>'+li(blind.map(function(it){return '<b>'+it.code+'</b> '+esc(it.text)+' (ตนเอง '+f2(sc.self.item[it.code])+' / ผู้อื่น '+f2(sc.item[it.code])+')';}));
+    if(hidden.length) body += '<p><span class="flag f-h">จุดแข็งซ่อนอยู่</span> เรื่องที่ผู้อื่นเห็นว่าทำได้ดีกว่าที่ตัวเองคิด:</p>'+li(hidden.map(function(it){return '<b>'+it.code+'</b> '+esc(it.text)+' (ตนเอง '+f2(sc.self.item[it.code])+' / ผู้อื่น '+f2(sc.item[it.code])+')';}));
+    A.self = sec('การรับรู้ตนเองเทียบกับผู้อื่น', body);
+  } else A.self = sec('การรับรู้ตนเองเทียบกับผู้อื่น','<p class="muted">ยังไม่ได้ประเมินตนเอง จึงเปรียบเทียบไม่ได้</p>');
+
+  // 4) มุมมองที่ต่างกันระหว่างกลุ่ม
+  if(groups.length>=2){
+    var notes=[];
+    var go = groups.slice().sort(function(a,b){return b.stats.overall-a.stats.overall;});
+    var d = go[0].stats.overall - go[go.length-1].stats.overall;
+    if(d>=0.4) notes.push('ภาพรวม <b>'+esc(go[0].label)+'</b> ให้คะแนนสูงสุด ('+f2(go[0].stats.overall)+') ส่วน <b>'+esc(go[go.length-1].label)+'</b> ให้ต่ำสุด ('+f2(go[go.length-1].stats.overall)+') ต่างกัน '+d.toFixed(2));
+    else notes.push('ทุกกลุ่มให้คะแนนภาพรวมใกล้เคียงกัน (ต่างกันไม่เกิน '+d.toFixed(2)+') แสดงว่าพฤติกรรมสม่ำเสมอไม่ว่าจะอยู่กับใคร');
+    cats.forEach(function(c){
+      var gs = groups.filter(function(g){return g.stats.cat[c]!=null;}).sort(function(a,b){return b.stats.cat[c]-a.stats.cat[c];});
+      if(gs.length<2) return; var hi=gs[0], lo=gs[gs.length-1], dd=hi.stats.cat[c]-lo.stats.cat[c];
+      if(dd>=0.6) notes.push('หมวด <b>'+esc(catName(c))+'</b>: '+esc(hi.label)+' ให้ '+f2(hi.stats.cat[c])+' แต่ '+esc(lo.label)+' ให้เพียง '+f2(lo.stats.cat[c]));
+    });
+    var sup = groups.filter(function(g){return g.key==='หัวหน้า';})[0], sub = groups.filter(function(g){return g.key==='ลูกน้อง';})[0];
+    if(sup && sub){
+      var ds = sub.stats.overall - sup.stats.overall;
+      if(ds>=0.4) notes.push('ลูกน้องมองในแง่ดีกว่าหัวหน้า แสดงว่าดูแลทีมได้ดี แต่ผลงานหรือวิธีบริหารอาจยังไม่ตรงความคาดหวังของหัวหน้า ควรคุยเป้าหมายกับหัวหน้าให้ชัด');
+      else if(ds<=-0.4) notes.push('หัวหน้ามองในแง่ดีกว่าลูกน้อง แสดงว่าทำงานตอบโจทย์หัวหน้า แต่ลูกทีมอาจยังรู้สึกไม่ได้รับการดูแลหรือพัฒนาเพียงพอ ควรให้เวลากับทีมมากขึ้น');
+    }
+    A.groups = sec('มุมมองที่ต่างกันระหว่างกลุ่มผู้ประเมิน', li(notes));
+  }
+
+  // 5) แนวทางพัฒนา (IDP)
+  var focus = catSorted.slice().reverse().filter(function(c){return sc.cat[c]<4.2;}).slice(0,2);
+  if(!focus.length) focus=[worst];
+  var idp = focus.map(function(c){ var acts = DEV[catLetter(c)]||[];
+    return '<div class="idp"><b>'+esc(c)+'</b> <span class="cell '+cls(sc.cat[c])+'">'+f2(sc.cat[c])+'</span>'+li(acts.map(esc))+'</div>'; }).join('');
+  idp += '<p class="small">เรื่องที่ควรรักษาไว้และใช้เป็นต้นแบบให้ทีม: <b>'+esc(catName(best))+'</b>'+(sc.verdict==='พร้อมเติบโต'?' · เหมาะกับการมอบหมายงานที่ท้าทายขึ้นหรือเป็นพี่เลี้ยงให้หัวหน้ารุ่นใหม่':'')+'</p>';
+  A.idp = sec('แนวทางพัฒนาที่แนะนำ (สำหรับทำแผน IDP)', idp, 'plan');
+
+  // 6) ความคิดเห็นเด่น
+  var cm = r.comments||{}, pick=function(list){ var seen={}; return list.filter(function(c){ var k=c.text.trim(); if(c.group==='ตนเอง'||k.length<=2||seen[k]) return false; seen[k]=1; return true; }).slice(0,3); };
+  var c1=pick(cm.Q1||[]), c2=pick(cm.Q2||[]);
+  if(c1.length||c2.length) A.comments = sec('ความคิดเห็นเด่นจากผู้ประเมิน',
+    (c1.length?'<p><b>ทำต่อไป:</b></p>'+li(c1.map(function(c){return q(c.text)+' <span class="muted small">– '+esc(c.group)+'</span>';})):'')+
+    (c2.length?'<p><b>ควรปรับ:</b></p>'+li(c2.map(function(c){return q(c.text)+' <span class="muted small">– '+esc(c.group)+'</span>';})):''));
+
+  // 7) ความน่าเชื่อถือของข้อมูล
+  var asg = r.assigned||{}, total=0, got=0; Object.keys(asg).forEach(function(k){ if(k!=='ตนเอง') total+=asg[k]; });
+  groups.forEach(function(g){ got+=g.n; });
+  var rel=[];
+  var rate = total? got/total : 0;
+  rel.push('มีผู้ประเมิน (ไม่รวมตนเอง) ตอบกลับ '+got+' จาก '+total+' คน ('+Math.round(rate*100)+'%)'+(rate<0.6?' <b style="color:var(--bad)">ยังน้อย ผลอาจคลาดเคลื่อน</b>':''));
+  if(!groups.some(function(g){return g.key==='หัวหน้า';})) rel.push('ยังไม่มีคะแนนจากหัวหน้า (น้ำหนัก 40%) ผลจึงมาจากกลุ่มอื่นเท่านั้น');
+  if(sc.subFew) rel.push('ลูกน้องตอบน้อยกว่า '+r.minSub+' คน จึงรวมกับกลุ่มเพื่อนร่วมงานเพื่อรักษาความลับ');
+  A.reliability = sec('ความน่าเชื่อถือของข้อมูล', li(rel), 'muted-sec');
+  return A;
+}
+
+/* วิเคราะห์ภาพรวมทีม (Dashboard) */
+function analyzeTeam(d){
+  var rs = d.ratees.filter(function(r){return r.overall!=null;});
+  if(!rs.length) return '';
+  var avg=function(a){ a=a.filter(function(x){return x!=null;}); return a.length? a.reduce(function(s,x){return s+x;},0)/a.length : null; };
+  var out=[];
+  var cnt={}; rs.forEach(function(r){ cnt[r.verdict]=(cnt[r.verdict]||0)+1; });
+  out.push('ผู้ถูกประเมินที่มีคะแนนแล้ว '+rs.length+' คน คะแนนเฉลี่ย <b>'+f2(avg(rs.map(function(r){return r.overall;})))+'</b> · '+
+    ['พร้อมเติบโต','พัฒนาต่อ','ยังไม่พร้อม'].map(function(v){return v+' <b>'+(cnt[v]||0)+'</b> คน';}).join(' · '));
+  var ca = d.cats.map(function(c){ return {c:c, v:avg(rs.map(function(r){return r.cat?r.cat[c]:null;}))}; }).filter(function(x){return x.v!=null;}).sort(function(a,b){return b.v-a.v;});
+  if(ca.length){
+    out.push('หมวดที่เป็นจุดแข็งของทีมผู้บริหารฝ่ายขาย: <b>'+esc(catName(ca[0].c))+'</b> ('+f2(ca[0].v)+') · หมวดที่ทีมควรพัฒนาร่วมกัน: <b>'+esc(catName(ca[ca.length-1].c))+'</b> ('+f2(ca[ca.length-1].v)+')');
+    var weakCount={}; rs.forEach(function(r){ var m=null; d.cats.forEach(function(c){ if(r.cat && r.cat[c]!=null && (m==null || r.cat[c]<r.cat[m])) m=c; }); if(m) weakCount[m]=(weakCount[m]||0)+1; });
+    var wk = Object.keys(weakCount).sort(function(a,b){return weakCount[b]-weakCount[a];})[0];
+    if(wk) out.push('<b>'+weakCount[wk]+'</b> จาก '+rs.length+' คนมีหมวด <b>'+esc(catName(wk))+'</b> เป็นหมวดที่ต่ำที่สุดของตัวเอง → เหมาะจัดเป็นหลักสูตรอบรมกลุ่ม');
+  }
+  var lv = [['ผู้บริหาร (GM/ผจก./ผช.ผจก.)', function(r){return r.position!=='หัวหน้าทีม';}], ['หัวหน้าทีม', function(r){return r.position==='หัวหน้าทีม';}]]
+    .map(function(x){ var l=rs.filter(x[1]); return l.length? x[0]+' เฉลี่ย <b>'+f2(avg(l.map(function(r){return r.overall;})))+'</b> ('+l.length+' คน)' : null; }).filter(Boolean);
+  if(lv.length) out.push('แยกตามระดับ: '+lv.join(' · '));
+  var over = rs.filter(function(r){return r.selfOverall!=null && r.selfOverall-r.overall>=0.5;});
+  if(over.length) out.push('ประเมินตนเองสูงกว่าที่ผู้อื่นเห็นตั้งแต่ 0.5 ขึ้นไป: '+over.map(function(r){return esc(r.nick||r.name)+' (+'+(r.selfOverall-r.overall).toFixed(2)+')';}).join(', ')+' → ควรคุย Feedback แบบตัวต่อตัว');
+  var ready = rs.filter(function(r){return r.verdict==='พร้อมเติบโต';}).sort(function(a,b){return b.overall-a.overall;});
+  if(ready.length) out.push('กลุ่มที่พร้อมเติบโต (พิจารณาประกอบ Successor Plan / Career Path): '+ready.map(function(r){return esc(r.nick||r.name)+' '+f2(r.overall);}).join(', '));
+  var lowResp = d.ratees.filter(function(r){return r.total && r.done/r.total<0.6;});
+  if(lowResp.length) out.push('<span style="color:var(--bad)">ยังตอบกลับไม่ถึง 60%:</span> '+lowResp.map(function(r){return esc(r.nick||r.name)+' ('+r.done+'/'+r.total+')';}).join(', ')+' ผลของคนกลุ่มนี้อาจยังไม่นิ่ง');
+  return '<div class="card an-card"><h2 style="font-size:16px;color:var(--navy);margin:0 0 6px">บทวิเคราะห์ภาพรวมทีม</h2>'+li(out)+'<div class="tiny muted">สร้างอัตโนมัติจากคะแนน ณ เวลาที่รีเฟรช</div></div>';
+}
+
 /* ======================= report ======================= */
 function openReport(id){
   call('apiReport', S.pw, id).then(viewReport).catch(function(e){ alert(errMsg(e)); });
 }
 var COL = {self:'#9aa5b1', w:'#173f68'};
-function radar(cats, w, self){
-  var n=cats.length, cx=260, cy=170, R=118, pts=function(vals){
-    return vals.map(function(v,i){ var a=-Math.PI/2+i*2*Math.PI/n, r=R*((v||0)/5); return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; });
-  };
-  var s = '<svg viewBox="0 0 520 330" width="100%" style="max-width:520px;display:block;margin:auto" font-family="Sarabun,sans-serif">';
-  [1,2,3,4,5].forEach(function(l){
-    var p = cats.map(function(_,i){ var a=-Math.PI/2+i*2*Math.PI/n, r=R*l/5; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
-    s += '<polygon points="'+p+'" fill="none" stroke="'+(l===3||l===4?'#c9d3de':'#e6ebf1')+'" stroke-dasharray="'+(l===4?'4 3':'')+'"/>';
+
+/* ---------- horizontal bar charts (SVG) ---------- */
+// สีประจำกลุ่มผู้ประเมิน (สีตามกลุ่ม ไม่เปลี่ยนตามลำดับ) · ตรวจ CVD แล้ว
+var GCOL = {'หัวหน้า':'#2a78d6', 'เพื่อน':'#eb6834', 'ลูกน้อง':'#1baf7a'};
+var SELF_INK = '#5d6b7a', REF_MID = '#b26b00', REF_GOOD = '#1f8a4c';
+function narrow(){ return window.innerWidth < 640; }
+function shortCat(c){ return c.replace(/^([A-Z])\.\s*/,'$1 ').split('และ')[0]; }
+function trunc(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
+function barPath(x0,y,w,h){
+  if(w<=0) return '';
+  var r = Math.min(4, h/2, w);
+  return 'M'+x0+','+y+'h'+(w-r)+'a'+r+','+r+' 0 0 1 '+r+','+r+'v'+(h-2*r)+'a'+r+','+r+' 0 0 1 -'+r+','+r+'h'+(-(w-r))+'z';
+}
+function diamond(cx,cy,s){ return '<polygon points="'+cx+','+(cy-s)+' '+(cx+s)+','+cy+' '+cx+','+(cy+s)+' '+(cx-s)+','+cy+'" fill="#fff" stroke="#fff" stroke-width="5"/>'+
+  '<polygon points="'+cx+','+(cy-s)+' '+(cx+s)+','+cy+' '+cx+','+(cy+s)+' '+(cx-s)+','+cy+'" fill="#fff" stroke="'+SELF_INK+'" stroke-width="2"/>'; }
+/** rows: [{label, sub, bars:[{v,color}], self, tick, value, tip, gapBefore}] */
+function hbar(rows, o){
+  o = o||{}; var W=o.W||(narrow()?420:760), LW=o.labelW||200, VW=66, PL=LW+12, PR=W-VW, PW=PR-PL, barH=o.barH||10, pad=o.pad||7, top=26;
+  var x = function(v){ return PL + Math.max(0,Math.min(5,v))/5*PW; };
+  var y = top, body='', hits='';
+  rows.forEach(function(r){
+    if(r.gapBefore) y += 10;
+    var nb = Math.max(1, r.bars.length), h = nb*barH + (nb-1)*2 + pad*2, cy = y + h/2;
+    body += '<text x="'+LW+'" y="'+(r.sub?cy-3:cy+4)+'" text-anchor="end" font-size="12.5" fill="#1b2430">'+esc(r.label)+'</text>';
+    if(r.sub) body += '<text x="'+LW+'" y="'+(cy+13)+'" text-anchor="end" font-size="11" fill="#5d6b7a">'+esc(r.sub)+'</text>';
+    r.bars.forEach(function(b,i){
+      if(b.v==null) return;
+      body += '<path d="'+barPath(PL, y+pad+i*(barH+2), x(b.v)-PL, barH)+'" fill="'+b.color+'"/>';
+    });
+    if(r.tick!=null) body += '<rect x="'+(x(r.tick)-1.5)+'" y="'+(y+3)+'" width="3" height="'+(h-6)+'" rx="1.5" fill="#1b2430"/>';
+    if(r.self!=null) body += diamond(x(r.self), cy, 5.5);
+    if(r.value!=null) body += '<text x="'+(PR+18)+'" y="'+(cy+4)+'" font-size="12.5" font-weight="700" fill="#1b2430">'+f2(r.value)+'</text>';
+    hits += '<rect x="0" y="'+y+'" width="'+W+'" height="'+h+'" fill="transparent" data-tip="'+esc(r.tip||'')+'"/>';
+    y += h;
   });
+  var H = y + 6, grid = '';
+  [0,1,2,3,4,5].forEach(function(t){
+    grid += '<line x1="'+x(t)+'" y1="'+(top-4)+'" x2="'+x(t)+'" y2="'+H+'" stroke="'+(t===0?'#c9d3de':'#eef1f5')+'"/>'+
+            '<text x="'+x(t)+'" y="'+(top-10)+'" text-anchor="middle" font-size="11" fill="#5d6b7a">'+t+'</text>';
+  });
+  [[3.5,REF_MID],[4,REF_GOOD]].forEach(function(rf){
+    grid += '<line x1="'+x(rf[0])+'" y1="'+(top-4)+'" x2="'+x(rf[0])+'" y2="'+H+'" stroke="'+rf[1]+'" stroke-width="1.2" stroke-dasharray="4 3" opacity=".75"/>';
+  });
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'" width="100%" font-family="Sarabun,sans-serif" role="img" aria-label="'+esc(o.title||'')+'">'+grid+body+hits+'</svg>';
+}
+function chartLegend(items){
+  return '<div class="lg" style="margin:0 0 6px">'+items.map(function(it){
+    var sw = it.kind==='self' ? '<svg width="14" height="14" style="vertical-align:-2px;margin-right:5px"><polygon points="7,1.5 12.5,7 7,12.5 1.5,7" fill="#fff" stroke="'+SELF_INK+'" stroke-width="2"/></svg>'
+      : it.kind==='tick' ? '<i style="background:#1b2430;width:3px;height:14px;vertical-align:-3px"></i>'
+      : it.kind==='ref' ? '<i style="background:none;border-left:2px dashed '+it.color+';width:2px;border-radius:0"></i>'
+      : '<i style="background:'+it.color+'"></i>';
+    return '<span>'+sw+esc(it.label)+'</span>';
+  }).join('')+'</div>';
+}
+var REF_LEGEND = [{kind:'ref',color:REF_MID,label:'3.50 พัฒนาต่อ'},{kind:'ref',color:REF_GOOD,label:'4.00 พร้อมเติบโต'}];
+function tipRow(k,v){ return '<div style="display:flex;justify-content:space-between;gap:16px"><span>'+k+'</span><b>'+f2(v)+'</b></div>'; }
+
+/* tooltip */
+(function(){
+  var tip = document.createElement('div'); tip.id='tip';
+  tip.style.cssText='position:fixed;z-index:60;pointer-events:none;background:#1b2430;color:#fff;font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px;max-width:300px;box-shadow:0 4px 14px rgba(0,0,0,.2);display:none';
+  document.body.appendChild(tip);
+  function show(e){ var t=e.target.closest && e.target.closest('[data-tip]'); if(!t||!t.getAttribute('data-tip')){ tip.style.display='none'; return; }
+    tip.innerHTML = t.getAttribute('data-tip'); tip.style.display='block';
+    var px = Math.min(e.clientX+14, window.innerWidth-tip.offsetWidth-8), py = e.clientY+14;
+    if(py+tip.offsetHeight > window.innerHeight-8) py = e.clientY-tip.offsetHeight-10;
+    tip.style.left=px+'px'; tip.style.top=py+'px'; }
+  document.addEventListener('mousemove', show);
+  document.addEventListener('click', show);
+  window.addEventListener('scroll', function(){ tip.style.display='none'; }, true);
+})();
+
+/* chart: คะแนนรายหมวด แยกกลุ่มผู้ประเมิน */
+function groupChart(cats, sc, groups, compact){
+  var rows = cats.map(function(c){
+    var tip = '<b>'+esc(c)+'</b>'+groups.map(function(g){ return tipRow(esc(g.label)+' (n='+g.n+')', g.stats.cat[c]); }).join('')+
+      tipRow('ถ่วงน้ำหนัก', sc.cat[c]) + (sc.self ? tipRow('ตนเอง', sc.self.cat[c]) : '');
+    return { label: shortCat(c), bars: groups.map(function(g){ return {v:g.stats.cat[c], color:GCOL[g.key]}; }),
+             tick: sc.cat[c], self: sc.self ? sc.self.cat[c] : null, value: sc.cat[c], tip: tip };
+  });
+  var lg = groups.map(function(g){ return {color:GCOL[g.key], label:g.label}; })
+    .concat([{kind:'tick',label:'ถ่วงน้ำหนัก'}], sc.self?[{kind:'self',label:'ตนเอง'}]:[], REF_LEGEND);
+  return chartLegend(lg) + hbar(rows, {W:compact&&!narrow()?520:null, labelW:narrow()?112:(compact?118:150), barH:10, title:'คะแนนรายหมวดแยกกลุ่มผู้ประเมิน'});
+}
+/* chart: คะแนนรายข้อ */
+function itemChart(items, sc, compact){
+  var last='';
+  var rows = items.map(function(it){
+    var o = sc.item[it.code], s = sc.self ? sc.self.item[it.code] : null, gb = last && last!==it.cat; last = it.cat;
+    return { label: it.code+'  '+trunc(it.text, narrow()?14:(compact?20:34)), bars:[{v:o, color:COL.w}], self:s, value:o, gapBefore: gb,
+             tip:'<b>'+esc(it.code)+'</b> '+esc(it.text)+tipRow('ผู้อื่น (ถ่วงน้ำหนัก)', o)+(sc.self?tipRow('ตนเอง', s):'') };
+  });
+  var lg = [{color:COL.w, label:'ผู้อื่น (ถ่วงน้ำหนัก)'}].concat(sc.self?[{kind:'self',label:'ตนเอง'}]:[], REF_LEGEND);
+  return chartLegend(lg) + hbar(rows, {W:compact&&!narrow()?520:null, labelW:narrow()?130:(compact?178:290), barH:12, pad:5, title:'คะแนนรายข้อ'});
+}
+/* chart: เปรียบเทียบทุกคน (Dashboard) */
+function overviewChart(ratees){
+  var list = ratees.slice().sort(function(a,b){ return (b.overall==null?-1:b.overall) - (a.overall==null?-1:a.overall); });
+  var rows = list.map(function(r){
+    return { label: narrow() ? (r.nick || r.name.split(' ')[0]) : r.name + (r.nick?' ('+r.nick+')':''), sub: narrow() ? r.branchName : r.position+' · '+r.branchName+(r.team?' '+r.team:''),
+             bars:[{v:r.overall, color:COL.w}], self:r.selfOverall, value:r.overall, pad:8,
+             tip:'<b>'+esc(r.name)+'</b><div>'+esc(r.position)+' · '+esc(r.branchName)+'</div>'+tipRow('คะแนนถ่วงน้ำหนัก', r.overall)+tipRow('ตนเอง', r.selfOverall)+
+                 '<div>ผล: '+esc(r.verdict)+' · ตอบแล้ว '+r.done+'/'+r.total+'</div>' };
+  });
+  var lg = [{color:COL.w, label:'คะแนนถ่วงน้ำหนัก'},{kind:'self',label:'ตนเอง'}].concat(REF_LEGEND);
+  return chartLegend(lg) + hbar(rows, {labelW:narrow()?110:230, barH:12, pad:13, title:'คะแนนผู้ถูกประเมินทุกคน'});
+}
+/** series: [{key,label,color,vals,width,dash,fill,dots}] */
+function radar(cats, series, showVals){
+  var n=cats.length, W=540, cx=270, cy=196, R=142;
+  var ang=function(i){ return -Math.PI/2+i*2*Math.PI/n; };
+  var pt=function(i,v){ var r=R*Math.max(0,Math.min(5,v||0))/5; return [cx+r*Math.cos(ang(i)), cy+r*Math.sin(ang(i))]; };
+  var s='<svg class="radar" viewBox="0 0 '+W+' 385" width="100%" style="max-width:560px;display:block;margin:auto" font-family="Sarabun,sans-serif" role="img" aria-label="กราฟใยแมงมุมรายหมวด">';
+  [5,4,3,2,1].forEach(function(l){
+    var p = cats.map(function(_,i){ var a=ang(i), r=R*l/5; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
+    s += '<polygon points="'+p+'" fill="'+(l===5?'#fafbfc':'none')+'" stroke="'+(l===4?REF_GOOD:'#e3e8ee')+'" stroke-width="'+(l===4?1.3:1)+'" stroke-dasharray="'+(l===4?'4 3':'')+'" opacity="'+(l===4?.7:1)+'"/>';
+  });
+  [1,2,3,4,5].forEach(function(l){ s += '<text x="'+(cx+4)+'" y="'+(cy-R*l/5+11)+'" font-size="10" fill="#9aa5b1">'+l+'</text>'; });
   cats.forEach(function(c,i){
-    var a=-Math.PI/2+i*2*Math.PI/n, x=cx+(R+14)*Math.cos(a), y=cy+(R+14)*Math.sin(a);
-    s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(a))+'" y2="'+(cy+R*Math.sin(a))+'" stroke="#e6ebf1"/>';
+    var a=ang(i), x=cx+(R+16)*Math.cos(a), y=cy+(R+16)*Math.sin(a);
+    s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(a))+'" y2="'+(cy+R*Math.sin(a))+'" stroke="#e3e8ee"/>';
     var anchor = Math.abs(Math.cos(a))<0.2?'middle':(Math.cos(a)>0?'start':'end');
-    var label = c.replace(/^[A-Z]\.\s*/,'').split('และ')[0], letter=(c.match(/^([A-Z])\./)||[])[1]||'';
-    s += '<text x="'+x.toFixed(1)+'" y="'+(y+ (Math.sin(a)>0.5?10:Math.sin(a)<-0.5?-4:4)).toFixed(1)+'" font-size="12.5" fill="#1b2430" text-anchor="'+anchor+'"><tspan font-weight="700">'+letter+'</tspan> '+esc(label)+'</text>';
+    var dy = Math.sin(a)>0.5?14:Math.sin(a)<-0.5?-6:4;
+    var letter=(c.match(/^([A-Z])\./)||[])[1]||'', label=c.replace(/^[A-Z]\.\s*/,'').split('และ')[0];
+    s += '<text x="'+x.toFixed(1)+'" y="'+(y+dy).toFixed(1)+'" font-size="13.5" fill="#1b2430" text-anchor="'+anchor+'"><tspan font-weight="700">'+letter+'</tspan> '+esc(label)+'</text>';
   });
-  if(self){ var ps=pts(self); s += '<polygon points="'+ps.map(function(p){return p.join(',');}).join(' ')+'" fill="rgba(154,165,177,.15)" stroke="'+COL.self+'" stroke-width="2" stroke-dasharray="5 3"/>'; }
-  var pw=pts(w); s += '<polygon points="'+pw.map(function(p){return p.join(',');}).join(' ')+'" fill="rgba(23,63,104,.18)" stroke="'+COL.w+'" stroke-width="2.5"/>';
-  pw.forEach(function(p,i){ if(w[i]!=null) s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="'+COL.w+'"/>'; });
-  [3,4].forEach(function(l){ s += '<text x="'+(cx+3)+'" y="'+(cy-R*l/5-2)+'" font-size="10" fill="#9aa5b1">'+l+'</text>'; });
+  series.forEach(function(se){
+    var ps = cats.map(function(_,i){ return pt(i, se.vals[i]); });
+    s += '<polygon points="'+ps.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+'" fill="'+(se.fill||'none')+'" stroke="'+se.color+'" stroke-width="'+(se.width||2)+'" stroke-dasharray="'+(se.dash||'')+'" stroke-linejoin="round"/>';
+  });
+  series.forEach(function(se){
+    if(!se.dots) return;
+    cats.forEach(function(c,i){ if(se.vals[i]==null) return; var p=pt(i,se.vals[i]);
+      s += '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4.5" fill="'+se.color+'" stroke="#fff" stroke-width="2"/>'; });
+  });
+  if(showVals){ var se=series[0];
+    cats.forEach(function(c,i){ if(se.vals[i]==null) return; var a=ang(i), r=R*se.vals[i]/5 - 18, x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+      s += '<text x="'+x.toFixed(1)+'" y="'+(y+4).toFixed(1)+'" font-size="12" font-weight="700" fill="#1b2430" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="3">'+f2(se.vals[i])+'</text>'; });
+  }
+  // hit areas per axis for tooltip
+  cats.forEach(function(c,i){ var p=pt(i,5.3);
+    var tip='<b>'+esc(c)+'</b>'+series.map(function(se){ return tipRow(esc(se.label), se.vals[i]); }).join('');
+    s += '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="34" fill="transparent" data-tip="'+esc(tip)+'"/>';
+    var q=pt(i,2.6); s += '<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="40" fill="transparent" data-tip="'+esc(tip)+'"/>';
+  });
   return s+'</svg>';
+}
+/* ใยแมงมุมพร้อมปุ่มเลือกเส้นที่ต้องการแสดง */
+var RADAR_ON = {w:true, self:true};
+function radarSeries(cats, sc, groups){
+  var all = [{key:'w', label:'ผู้อื่น (ถ่วงน้ำหนัก)', color:COL.w, vals:cats.map(function(c){return sc.cat[c];}), width:3, fill:'rgba(23,63,104,.14)', dots:true}];
+  groups.forEach(function(g){ all.push({key:g.key, label:g.label+' (n='+g.n+')', color:GCOL[g.key], vals:cats.map(function(c){return g.stats.cat[c];}), width:2}); });
+  if(sc.self) all.push({key:'self', label:'ตนเอง', color:SELF_INK, vals:cats.map(function(c){return sc.self.cat[c];}), width:2, dash:'6 4'});
+  return all;
+}
+function radarBlock(cats, sc, groups){
+  var all = radarSeries(cats, sc, groups);
+  var on = all.filter(function(se){ return RADAR_ON[se.key]; });
+  if(!on.length){ on=[all[0]]; }
+  var chips = all.map(function(se){
+    var act = RADAR_ON[se.key];
+    var sw = se.key==='self' ? '<svg width="18" height="8" style="margin-right:6px"><line x1="0" y1="4" x2="18" y2="4" stroke="'+se.color+'" stroke-width="2" stroke-dasharray="5 3"/></svg>'
+           : '<svg width="18" height="8" style="margin-right:6px"><line x1="0" y1="4" x2="18" y2="4" stroke="'+se.color+'" stroke-width="'+(se.key==='w'?3:2)+'"/></svg>';
+    return '<button class="chip'+(act?' on':'')+'" data-rk="'+se.key+'">'+sw+esc(se.label)+'</button>';
+  }).join('');
+  return '<div id="rdr"><div class="chips noprint-off">'+chips+'</div>'+radar(cats, on, on.length===1 || (on[0].key==='w' && on.length<=2))+
+    '<div class="tiny muted center">กดปุ่มด้านบนเพื่อเปิด/ปิดเส้นของแต่ละกลุ่ม · เส้นประเขียว = 4.00</div></div>';
+}
+function bindRadar(cats, sc, groups){
+  Array.prototype.forEach.call(document.querySelectorAll('#rdr .chip'), function(b){
+    b.onclick = function(){ var k=b.getAttribute('data-rk'); RADAR_ON[k]=!RADAR_ON[k];
+      var box=document.getElementById('rdr'); box.outerHTML = radarBlock(cats, sc, groups); bindRadar(cats, sc, groups); };
+  });
 }
 function viewReport(r){
   var p=r.person, sc=r.score, cats=r.cats, groups=sc.groups.filter(function(g){return g.n>0;});
@@ -490,16 +841,21 @@ function viewReport(r){
     var n = k==='ตนเอง' ? (sc.self?1:0) : (function(){ var g=sc.groups.filter(function(g){return g.key===k;})[0]; if(sc.subFew && k==='ลูกน้อง') return null; return g?g.n:0; })();
     return '<tr><td>'+relLabel[k]+'</td><td class="num">'+(n==null?'(รวมกับเพื่อน)':n+' / '+asg[k])+'</td></tr>';
   }).join('');
+  var respLine = ['ตนเอง','หัวหน้า','เพื่อน','ลูกน้อง'].filter(function(k){return asg[k];}).map(function(k){
+    var n = k==='ตนเอง' ? (sc.self?1:0) : ((sc.groups.filter(function(g){return g.key===k;})[0]||{}).n||0);
+    if(sc.subFew && k==='ลูกน้อง') n = '(รวมกับเพื่อน)'; else n = n+'/'+asg[k];
+    return relLabel[k]+' '+n; }).join(' · ');
   var wRows = groups.map(function(g){ return '<tr><td>'+esc(g.label)+'</td><td class="num">'+g.weight+'%</td><td class="num">'+Math.round(g.effWeight*100)+'%</td></tr>'; }).join('');
 
   var html = '<div class="wrap wide rp">'+
-   '<div class="noprint" style="display:flex;justify-content:space-between;margin-bottom:12px"><button class="btn ghost sm" id="bk">‹ กลับ Dashboard</button><button class="btn sm" id="pr">พิมพ์ / บันทึก PDF</button></div>'+
+   '<div class="noprint" style="display:flex;justify-content:space-between;margin-bottom:12px"><button class="btn ghost sm" id="bk">‹ กลับ Dashboard</button><div style="display:flex;gap:8px"><button class="btn sm" id="pr">พิมพ์สรุป 2 หน้า (PDF)</button><button class="btn ghost sm" id="prf">พิมพ์ฉบับเต็ม</button></div></div>'+
    '<div class="card"><div class="rp-head"><div><div class="muted small">รายงานผลการประเมิน 360 องศา · '+esc(S.admin?S.admin.title:'')+'</div>'+
      '<div class="who" style="font-size:24px;margin-top:4px">'+fullName(p)+'</div>'+
      '<div class="muted">'+esc(p.position)+' · '+esc(p.branchName)+(p.team?' '+esc(p.team):'')+'</div></div>'+
      '<div style="text-align:right"><div class="muted small">คะแนนถ่วงน้ำหนัก (ไม่รวมตนเอง)</div><div class="big">'+f2(sc.overall)+'</div><div style="margin-top:6px">'+vPill(sc.verdict)+'</div></div></div>'+
      (sc.capped?'<div class="note" style="margin-top:12px">คะแนนรวม ≥ 4.00 แต่มีหมวดต่ำกว่า 3.00 จึงยังจัดอยู่ในกลุ่ม “พัฒนาต่อ”</div>':'')+
-     '<div class="grid2" style="margin-top:14px">'+
+     '<div class="print-only small" style="margin-top:6px">ผู้ตอบกลับ: '+respLine+'</div>'+
+     '<div class="grid2 hdr-tables" style="margin-top:14px">'+
        '<div><table class="t"><thead><tr><th>ผู้ประเมิน</th><th class="num">ตอบกลับ / ทั้งหมด</th></tr></thead><tbody>'+respRows+'</tbody></table></div>'+
        '<div><table class="t"><thead><tr><th>กลุ่มที่ใช้คิดคะแนน</th><th class="num">น้ำหนักตามเกณฑ์</th><th class="num">น้ำหนักที่ใช้จริง</th></tr></thead><tbody>'+(wRows||'<tr><td colspan="3" class="muted">ยังไม่มีข้อมูล</td></tr>')+'</tbody></table>'+
        (sc.subFew?'<div class="tiny muted" style="margin-top:6px">ลูกน้องตอบน้อยกว่า '+r.minSub+' คน จึงรวมกับกลุ่มเพื่อนร่วมงาน</div>':'')+'</div>'+
@@ -507,10 +863,24 @@ function viewReport(r){
      '<div class="small" style="margin-top:12px">คะแนนตนเอง <b>'+f2(sc.self?sc.self.overall:null)+'</b>'+
        (gap!=null?' · ต่างจากมุมมองผู้อื่น <b style="color:'+(Math.abs(gap)>=0.5?'var(--bad)':'var(--ink)')+'">'+(gap>0?'+':'')+gap.toFixed(2)+'</b> '+(gap>=0.5?'(มองตัวเองสูงกว่าที่ผู้อื่นเห็น)':gap<=-0.5?'(มองตัวเองต่ำกว่าที่ผู้อื่นเห็น)':'(มุมมองใกล้เคียงกัน)'):'')+'</div>'+
    '</div>';
+  var A = analyzePerson(r);
+  var pair = function(title, chart, analysis, note, extra){
+    return '<div class="card pair-card '+(extra||'')+'"><h2>'+title+'</h2><div class="pair"><div class="pair-chart">'+chart+(note?'<div class="tiny muted">'+note+'</div>':'')+'</div>'+
+      '<div class="pair-an an-card">'+(analysis||'<div class="muted small">–</div>')+'</div></div></div>';
+  };
+  // 1) ภาพรวม: ใยแมงมุม + สรุป + การรับรู้ตนเอง
+  html += pair('1. ภาพรวมรายหมวด', radarBlock(cats, sc, groups), (A.summary||'')+(A.self||''));
+  // 2) มุมมองแต่ละกลุ่ม: กราฟแท่งแยกกลุ่ม + บทวิเคราะห์กลุ่ม
+  if(groups.length) html += pair('2. มุมมองของแต่ละกลุ่มผู้ประเมิน', groupChart(cats, sc, groups, true), (A.groups||'')+(A.reliability||''),
+      'แท่งสี = ค่าเฉลี่ยแต่ละกลุ่ม · เส้นดำ = คะแนนถ่วงน้ำหนัก · ◇ = ประเมินตนเอง');
+  // 3) รายข้อ: กราฟรายข้อ + จุดแข็ง/จุดที่ควรพัฒนา
+  if(groups.length) html += pair('3. คะแนนรายพฤติกรรม (15 ข้อ)', itemChart(r.items, sc, true), (A.strength||'')+(A.weak||''), null, 'p2');
+  // 4) แผนพัฒนา + ความคิดเห็น
+  if(A.idp) html += '<div class="card pair-card'+(groups.length?'':' p2')+'"><h2>4. แนวทางพัฒนาและเสียงสะท้อน</h2><div class="pair"><div class="an-card">'+A.idp+'</div><div class="an-card">'+(A.comments||'<div class="muted small">ไม่มีความคิดเห็นจากผู้ประเมิน</div>')+'</div></div>'+
+    '<div class="tiny muted" style="margin-top:6px">บทวิเคราะห์สร้างอัตโนมัติจากคะแนนและเกณฑ์ ควรให้ HR และหัวหน้าทบทวนก่อนนำไปคุยกับพนักงาน</div></div>';
 
-  // categories
-  html += '<div class="grid2"><div class="card"><h2>ภาพรวมรายหมวด</h2>'+radar(cats, cats.map(function(c){return sc.cat[c];}), selfCat)+
-    '<div class="lg" style="justify-content:center"><span><i style="background:'+COL.w+'"></i>ผู้อื่น (ถ่วงน้ำหนัก)</span>'+(selfCat?'<span><i style="background:'+COL.self+'"></i>ตนเอง</span>':'')+'</div></div>';
+  // ภาคผนวก: ตารางคะแนนละเอียด
+  html += '<div class="appx"><div class="appx-h">ภาคผนวก – ตารางคะแนนละเอียด</div>';
   html += '<div class="card"><h2>คะแนนรายหมวดแยกกลุ่ม</h2><div class="scroll"><table class="t"><thead><tr><th>หมวด</th><th class="num">ตนเอง</th>'+
     groups.map(function(g){return '<th class="num">'+esc(g.label)+'<div class="tiny">n='+g.n+'</div></th>';}).join('')+'<th class="num">ถ่วงน้ำหนัก</th></tr></thead><tbody>';
   cats.forEach(function(c){
@@ -519,7 +889,7 @@ function viewReport(r){
       '<td class="num"><b>'+cell(sc.cat[c])+'</b></td></tr>';
   });
   html += '<tr><td><b>เฉลี่ย</b></td><td class="num">'+cell(sc.self?sc.self.overall:null)+'</td>'+groups.map(function(g){return '<td class="num">'+cell(g.stats.overall)+'</td>';}).join('')+'<td class="num"><b>'+cell(sc.overall)+'</b></td></tr>';
-  html += '</tbody></table></div><div class="lg" style="margin-top:10px"><span><i style="background:var(--goodbg)"></i>≥ 4.00</span><span><i style="background:var(--midbg)"></i>3.50–3.99</span><span><i style="background:var(--badbg)"></i>&lt; 3.50</span></div></div></div>';
+  html += '</tbody></table></div><div class="lg" style="margin-top:10px"><span><i style="background:var(--goodbg)"></i>≥ 4.00</span><span><i style="background:var(--midbg)"></i>3.50–3.99</span><span><i style="background:var(--badbg)"></i>&lt; 3.50</span></div></div>';
 
   // items
   html += '<div class="card brk"><h2>คะแนนรายข้อ</h2><div class="lg" style="margin-bottom:8px">'+
@@ -546,10 +916,13 @@ function viewReport(r){
     var list = r.comments[q.code]||[];
     html += '<h3>'+esc(q.text)+'</h3>'+(list.length ? list.map(function(c){return '<div class="cm"><div class="g">'+esc(c.group)+'</div>'+esc(c.text).replace(/\n/g,'<br>')+'</div>';}).join('') : '<div class="muted small">– ไม่มี –</div>');
   });
-  html += '</div><div class="tiny muted" style="text-align:right;margin-bottom:20px">สร้างรายงาน '+esc(r.generated)+' · เกณฑ์: หัวหน้า '+r.weights['หัวหน้า']+'% · เพื่อน '+r.weights['เพื่อน']+'% · ลูกน้อง '+r.weights['ลูกน้อง']+'% · ตนเองไม่คิดคะแนน</div></div>';
+  html += '</div></div><div class="tiny muted rp-foot" style="text-align:right;margin-bottom:20px">สร้างรายงาน '+esc(r.generated)+' · เกณฑ์: หัวหน้า '+r.weights['หัวหน้า']+'% · เพื่อน '+r.weights['เพื่อน']+'% · ลูกน้อง '+r.weights['ลูกน้อง']+'% · ตนเองไม่คิดคะแนน</div></div>';
   app.innerHTML = html; toTop();
   document.getElementById('bk').onclick = viewAdmin;
-  document.getElementById('pr').onclick = function(){ window.print(); };
+  var doPrint = function(full){ document.body.classList.toggle('print-full', full); setTimeout(function(){ window.print(); }, 50); };
+  document.getElementById('pr').onclick = function(){ doPrint(false); };
+  document.getElementById('prf').onclick = function(){ doPrint(true); };
+  bindRadar(cats, sc, groups);
 }
 
 /* ======================= boot ======================= */
